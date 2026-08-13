@@ -1,0 +1,1178 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		306D111C300671EC009897B0 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 306D111B300671EC009897B0 /* GoogleSignIn */; };
+		30EA150E300FEB1B0014B577 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 30EA150D300FEB1B0014B577 /* FirebaseFirestore */; };
+		30EA1510300FEB270014B577 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 30EA150F300FEB270014B577 /* FirebaseAuth */; };
+		30EA1512300FEB380014B577 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 30EA1511300FEB380014B577 /* GoogleSignIn */; };
+		30EA1514300FEB4B0014B577 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 30EA1513300FEB4B0014B577 /* FirebaseCore */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		306D10D1300669C3009897B0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3082F4662FEAB42A008F0411 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 306D10C3300669BE009897B0;
+			remoteInfo = MobileMusicStreaming;
+		};
+		306D10DB300669C3009897B0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3082F4662FEAB42A008F0411 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 306D10C3300669BE009897B0;
+			remoteInfo = MobileMusicStreaming;
+		};
+		3082F47C2FEAB42C008F0411 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3082F4662FEAB42A008F0411 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3082F46D2FEAB42A008F0411;
+			remoteInfo = PersonalMusicHost;
+		};
+		3082F4862FEAB42C008F0411 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3082F4662FEAB42A008F0411 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3082F46D2FEAB42A008F0411;
+			remoteInfo = PersonalMusicHost;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		306D10C4300669BE009897B0 /* MobileMusicStreaming.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MobileMusicStreaming.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		306D10D0300669C3009897B0 /* MobileMusicStreamingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MobileMusicStreamingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		306D10DA300669C3009897B0 /* MobileMusicStreamingUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MobileMusicStreamingUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3082F46E2FEAB42A008F0411 /* PersonalMusicHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PersonalMusicHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3082F47B2FEAB42C008F0411 /* PersonalMusicHostTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PersonalMusicHostTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3082F4852FEAB42C008F0411 /* PersonalMusicHostUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PersonalMusicHostUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		306D110D30066EAC009897B0 /* Exceptions for "PersonalMusicHost" folder in "MobileMusicStreaming" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Localizable.xcstrings,
+				Models/AppModels.swift,
+				Models/Environment.swift,
+				Models/FirestoreModels.swift,
+				Services/AudioPlayerEngine.swift,
+				Services/FirebaseAuthService.swift,
+				Services/FirebaseDatabaseService.swift,
+				Services/GoogleDriveService.swift,
+				Services/SecureDriveImage.swift,
+				ViewModels/AuthViewModel.swift,
+				ViewModels/PlayerViewModel.swift,
+				ViewModels/PlaylistManagerViewModel.swift,
+				ViewModels/ProfileViewModel.swift,
+				Views/App/MainAppView.swift,
+				Views/Common/PanelButtons.swift,
+				Views/Common/SectionView.swift,
+				Views/Dashboard/Components/AlbumCard.swift,
+				Views/Dashboard/Components/AlbumRow.swift,
+				Views/Dashboard/Components/DashboardTopBar.swift,
+				Views/Dashboard/Components/GenreResultsView.swift,
+				Views/Dashboard/Components/LibraryView.swift,
+				Views/Dashboard/Components/PlaylistCard.swift,
+				Views/Dashboard/Components/SearchResultsView.swift,
+				Views/Dashboard/Components/TrackCard.swift,
+				Views/Dashboard/Components/TrackRow.swift,
+				Views/Dashboard/MusicDashboardView.swift,
+				Views/Dashboard/Panels/AlbumDetailPanelView.swift,
+				Views/Dashboard/Panels/TrackDetailPanelView.swift,
+				Views/Login/LoginView.swift,
+				Views/Player/MiniPlayerView.swift,
+				Views/Player/TrackCarouselView.swift,
+				Views/Player/TurntableCDView.swift,
+				Views/Playlist/AddToPlaylistSheet.swift,
+				Views/Playlist/PlaylistDetailView.swift,
+				Views/Profile/Components/StatCard.swift,
+				Views/Profile/ProfileView.swift,
+			);
+			target = 306D10C3300669BE009897B0 /* MobileMusicStreaming */;
+		};
+		306D111130067020009897B0 /* Exceptions for "MobileMusicStreaming" folder in "MobileMusicStreaming" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 306D10C3300669BE009897B0 /* MobileMusicStreaming */;
+		};
+		30A2C3962FF1039900A2A617 /* Exceptions for "PersonalMusicHost" folder in "PersonalMusicHost" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+				Secrets.xcconfig,
+			);
+			target = 3082F46D2FEAB42A008F0411 /* PersonalMusicHost */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		306D10C5300669BE009897B0 /* MobileMusicStreaming */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				306D111130067020009897B0 /* Exceptions for "MobileMusicStreaming" folder in "MobileMusicStreaming" target */,
+			);
+			path = MobileMusicStreaming;
+			sourceTree = "<group>";
+		};
+		306D10D3300669C3009897B0 /* MobileMusicStreamingTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = MobileMusicStreamingTests;
+			sourceTree = "<group>";
+		};
+		306D10DD300669C3009897B0 /* MobileMusicStreamingUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = MobileMusicStreamingUITests;
+			sourceTree = "<group>";
+		};
+		3082F4702FEAB42A008F0411 /* PersonalMusicHost */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				30A2C3962FF1039900A2A617 /* Exceptions for "PersonalMusicHost" folder in "PersonalMusicHost" target */,
+				306D110D30066EAC009897B0 /* Exceptions for "PersonalMusicHost" folder in "MobileMusicStreaming" target */,
+			);
+			path = PersonalMusicHost;
+			sourceTree = "<group>";
+		};
+		3082F47E2FEAB42C008F0411 /* PersonalMusicHostTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = PersonalMusicHostTests;
+			sourceTree = "<group>";
+		};
+		3082F4882FEAB42C008F0411 /* PersonalMusicHostUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = PersonalMusicHostUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		306D10C1300669BE009897B0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				306D111C300671EC009897B0 /* GoogleSignIn in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		306D10CD300669C3009897B0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		306D10D7300669C3009897B0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3082F46B2FEAB42A008F0411 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				30EA150E300FEB1B0014B577 /* FirebaseFirestore in Frameworks */,
+				30EA1510300FEB270014B577 /* FirebaseAuth in Frameworks */,
+				30EA1514300FEB4B0014B577 /* FirebaseCore in Frameworks */,
+				30EA1512300FEB380014B577 /* GoogleSignIn in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3082F4782FEAB42C008F0411 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3082F4822FEAB42C008F0411 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		306D1114300671CF009897B0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		3082F4652FEAB42A008F0411 = {
+			isa = PBXGroup;
+			children = (
+				3082F4702FEAB42A008F0411 /* PersonalMusicHost */,
+				3082F47E2FEAB42C008F0411 /* PersonalMusicHostTests */,
+				3082F4882FEAB42C008F0411 /* PersonalMusicHostUITests */,
+				306D10C5300669BE009897B0 /* MobileMusicStreaming */,
+				306D10D3300669C3009897B0 /* MobileMusicStreamingTests */,
+				306D10DD300669C3009897B0 /* MobileMusicStreamingUITests */,
+				306D1114300671CF009897B0 /* Frameworks */,
+				3082F46F2FEAB42A008F0411 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		3082F46F2FEAB42A008F0411 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3082F46E2FEAB42A008F0411 /* PersonalMusicHost.app */,
+				3082F47B2FEAB42C008F0411 /* PersonalMusicHostTests.xctest */,
+				3082F4852FEAB42C008F0411 /* PersonalMusicHostUITests.xctest */,
+				306D10C4300669BE009897B0 /* MobileMusicStreaming.app */,
+				306D10D0300669C3009897B0 /* MobileMusicStreamingTests.xctest */,
+				306D10DA300669C3009897B0 /* MobileMusicStreamingUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		306D10C3300669BE009897B0 /* MobileMusicStreaming */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 306D10E2300669C3009897B0 /* Build configuration list for PBXNativeTarget "MobileMusicStreaming" */;
+			buildPhases = (
+				306D10C0300669BE009897B0 /* Sources */,
+				306D10C1300669BE009897B0 /* Frameworks */,
+				306D10C2300669BE009897B0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				306D10C5300669BE009897B0 /* MobileMusicStreaming */,
+			);
+			name = MobileMusicStreaming;
+			packageProductDependencies = (
+				306D111B300671EC009897B0 /* GoogleSignIn */,
+			);
+			productName = MobileMusicStreaming;
+			productReference = 306D10C4300669BE009897B0 /* MobileMusicStreaming.app */;
+			productType = "com.apple.product-type.application";
+		};
+		306D10CF300669C3009897B0 /* MobileMusicStreamingTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 306D10E5300669C3009897B0 /* Build configuration list for PBXNativeTarget "MobileMusicStreamingTests" */;
+			buildPhases = (
+				306D10CC300669C3009897B0 /* Sources */,
+				306D10CD300669C3009897B0 /* Frameworks */,
+				306D10CE300669C3009897B0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				306D10D2300669C3009897B0 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				306D10D3300669C3009897B0 /* MobileMusicStreamingTests */,
+			);
+			name = MobileMusicStreamingTests;
+			packageProductDependencies = (
+			);
+			productName = MobileMusicStreamingTests;
+			productReference = 306D10D0300669C3009897B0 /* MobileMusicStreamingTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		306D10D9300669C3009897B0 /* MobileMusicStreamingUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 306D10E8300669C3009897B0 /* Build configuration list for PBXNativeTarget "MobileMusicStreamingUITests" */;
+			buildPhases = (
+				306D10D6300669C3009897B0 /* Sources */,
+				306D10D7300669C3009897B0 /* Frameworks */,
+				306D10D8300669C3009897B0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				306D10DC300669C3009897B0 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				306D10DD300669C3009897B0 /* MobileMusicStreamingUITests */,
+			);
+			name = MobileMusicStreamingUITests;
+			packageProductDependencies = (
+			);
+			productName = MobileMusicStreamingUITests;
+			productReference = 306D10DA300669C3009897B0 /* MobileMusicStreamingUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		3082F46D2FEAB42A008F0411 /* PersonalMusicHost */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3082F48F2FEAB42C008F0411 /* Build configuration list for PBXNativeTarget "PersonalMusicHost" */;
+			buildPhases = (
+				30C250313003A7F500776F34 /* SwiftLint */,
+				3082F46A2FEAB42A008F0411 /* Sources */,
+				3082F46B2FEAB42A008F0411 /* Frameworks */,
+				3082F46C2FEAB42A008F0411 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				3082F4702FEAB42A008F0411 /* PersonalMusicHost */,
+			);
+			name = PersonalMusicHost;
+			packageProductDependencies = (
+				30EA150D300FEB1B0014B577 /* FirebaseFirestore */,
+				30EA150F300FEB270014B577 /* FirebaseAuth */,
+				30EA1511300FEB380014B577 /* GoogleSignIn */,
+				30EA1513300FEB4B0014B577 /* FirebaseCore */,
+			);
+			productName = PersonalMusicHost;
+			productReference = 3082F46E2FEAB42A008F0411 /* PersonalMusicHost.app */;
+			productType = "com.apple.product-type.application";
+		};
+		3082F47A2FEAB42C008F0411 /* PersonalMusicHostTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3082F4922FEAB42C008F0411 /* Build configuration list for PBXNativeTarget "PersonalMusicHostTests" */;
+			buildPhases = (
+				3082F4772FEAB42C008F0411 /* Sources */,
+				3082F4782FEAB42C008F0411 /* Frameworks */,
+				3082F4792FEAB42C008F0411 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3082F47D2FEAB42C008F0411 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				3082F47E2FEAB42C008F0411 /* PersonalMusicHostTests */,
+			);
+			name = PersonalMusicHostTests;
+			packageProductDependencies = (
+			);
+			productName = PersonalMusicHostTests;
+			productReference = 3082F47B2FEAB42C008F0411 /* PersonalMusicHostTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		3082F4842FEAB42C008F0411 /* PersonalMusicHostUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3082F4952FEAB42C008F0411 /* Build configuration list for PBXNativeTarget "PersonalMusicHostUITests" */;
+			buildPhases = (
+				3082F4812FEAB42C008F0411 /* Sources */,
+				3082F4822FEAB42C008F0411 /* Frameworks */,
+				3082F4832FEAB42C008F0411 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3082F4872FEAB42C008F0411 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				3082F4882FEAB42C008F0411 /* PersonalMusicHostUITests */,
+			);
+			name = PersonalMusicHostUITests;
+			packageProductDependencies = (
+			);
+			productName = PersonalMusicHostUITests;
+			productReference = 3082F4852FEAB42C008F0411 /* PersonalMusicHostUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3082F4662FEAB42A008F0411 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2660;
+				LastUpgradeCheck = 2660;
+				TargetAttributes = {
+					306D10C3300669BE009897B0 = {
+						CreatedOnToolsVersion = 26.6;
+					};
+					306D10CF300669C3009897B0 = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = 306D10C3300669BE009897B0;
+					};
+					306D10D9300669C3009897B0 = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = 306D10C3300669BE009897B0;
+					};
+					3082F46D2FEAB42A008F0411 = {
+						CreatedOnToolsVersion = 26.5;
+					};
+					3082F47A2FEAB42C008F0411 = {
+						CreatedOnToolsVersion = 26.5;
+						TestTargetID = 3082F46D2FEAB42A008F0411;
+					};
+					3082F4842FEAB42C008F0411 = {
+						CreatedOnToolsVersion = 26.5;
+						TestTargetID = 3082F46D2FEAB42A008F0411;
+					};
+				};
+			};
+			buildConfigurationList = 3082F4692FEAB42A008F0411 /* Build configuration list for PBXProject "PersonalMusicHost" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 3082F4652FEAB42A008F0411;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				308DB0512FEC155000F6AD66 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				308DB0562FEC15BE00F6AD66 /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */,
+				30A1CD1C3004D84C0075B1E3 /* XCRemoteSwiftPackageReference "FFmpegKit" */,
+				30EA150C300FEB020014B577 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 3082F46F2FEAB42A008F0411 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3082F46D2FEAB42A008F0411 /* PersonalMusicHost */,
+				3082F47A2FEAB42C008F0411 /* PersonalMusicHostTests */,
+				3082F4842FEAB42C008F0411 /* PersonalMusicHostUITests */,
+				306D10C3300669BE009897B0 /* MobileMusicStreaming */,
+				306D10CF300669C3009897B0 /* MobileMusicStreamingTests */,
+				306D10D9300669C3009897B0 /* MobileMusicStreamingUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		306D10C2300669BE009897B0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		306D10CE300669C3009897B0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		306D10D8300669C3009897B0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3082F46C2FEAB42A008F0411 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3082F4792FEAB42C008F0411 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3082F4832FEAB42C008F0411 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		30C250313003A7F500776F34 /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		306D10C0300669BE009897B0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		306D10CC300669C3009897B0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		306D10D6300669C3009897B0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3082F46A2FEAB42A008F0411 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3082F4772FEAB42C008F0411 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3082F4812FEAB42C008F0411 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		306D10D2300669C3009897B0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 306D10C3300669BE009897B0 /* MobileMusicStreaming */;
+			targetProxy = 306D10D1300669C3009897B0 /* PBXContainerItemProxy */;
+		};
+		306D10DC300669C3009897B0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 306D10C3300669BE009897B0 /* MobileMusicStreaming */;
+			targetProxy = 306D10DB300669C3009897B0 /* PBXContainerItemProxy */;
+		};
+		3082F47D2FEAB42C008F0411 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3082F46D2FEAB42A008F0411 /* PersonalMusicHost */;
+			targetProxy = 3082F47C2FEAB42C008F0411 /* PBXContainerItemProxy */;
+		};
+		3082F4872FEAB42C008F0411 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3082F46D2FEAB42A008F0411 /* PersonalMusicHost */;
+			targetProxy = 3082F4862FEAB42C008F0411 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		306D10E3300669C3009897B0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 532J43523H;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MobileMusicStreaming/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.rwd-studio.MobileMusicStreaming";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		306D10E4300669C3009897B0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 532J43523H;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MobileMusicStreaming/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.rwd-studio.MobileMusicStreaming";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		306D10E6300669C3009897B0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 532J43523H;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.rwd-studio.MobileMusicStreamingTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MobileMusicStreaming.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/MobileMusicStreaming";
+			};
+			name = Debug;
+		};
+		306D10E7300669C3009897B0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 532J43523H;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.rwd-studio.MobileMusicStreamingTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MobileMusicStreaming.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/MobileMusicStreaming";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		306D10E9300669C3009897B0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 532J43523H;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.rwd-studio.MobileMusicStreamingUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = MobileMusicStreaming;
+			};
+			name = Debug;
+		};
+		306D10EA300669C3009897B0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 532J43523H;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.rwd-studio.MobileMusicStreamingUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = MobileMusicStreaming;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		3082F48D2FEAB42C008F0411 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 532J43523H;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		3082F48E2FEAB42C008F0411 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 532J43523H;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		3082F4902FEAB42C008F0411 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 3082F4702FEAB42A008F0411 /* PersonalMusicHost */;
+			baseConfigurationReferenceRelativePath = Secrets.xcconfig;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = PersonalMusicHost/PersonalMusicHost.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = 532J43523H;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
+				ENABLE_USER_SELECTED_FILES = readwrite;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PersonalMusicHost/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.rwd-studio.musicstreaming";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		3082F4912FEAB42C008F0411 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 3082F4702FEAB42A008F0411 /* PersonalMusicHost */;
+			baseConfigurationReferenceRelativePath = Secrets.xcconfig;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = PersonalMusicHost/PersonalMusicHost.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = 532J43523H;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PersonalMusicHost/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.rwd-studio.musicstreaming";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		3082F4932FEAB42C008F0411 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = 532J43523H;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.rwd-studio.PersonalMusicHostTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PersonalMusicHost.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/PersonalMusicHost";
+			};
+			name = Debug;
+		};
+		3082F4942FEAB42C008F0411 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = 532J43523H;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.rwd-studio.PersonalMusicHostTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PersonalMusicHost.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/PersonalMusicHost";
+			};
+			name = Release;
+		};
+		3082F4962FEAB42C008F0411 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = 532J43523H;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.rwd-studio.PersonalMusicHostUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = PersonalMusicHost;
+			};
+			name = Debug;
+		};
+		3082F4972FEAB42C008F0411 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = 532J43523H;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.rwd-studio.PersonalMusicHostUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = PersonalMusicHost;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		306D10E2300669C3009897B0 /* Build configuration list for PBXNativeTarget "MobileMusicStreaming" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				306D10E3300669C3009897B0 /* Debug */,
+				306D10E4300669C3009897B0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		306D10E5300669C3009897B0 /* Build configuration list for PBXNativeTarget "MobileMusicStreamingTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				306D10E6300669C3009897B0 /* Debug */,
+				306D10E7300669C3009897B0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		306D10E8300669C3009897B0 /* Build configuration list for PBXNativeTarget "MobileMusicStreamingUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				306D10E9300669C3009897B0 /* Debug */,
+				306D10EA300669C3009897B0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3082F4692FEAB42A008F0411 /* Build configuration list for PBXProject "PersonalMusicHost" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3082F48D2FEAB42C008F0411 /* Debug */,
+				3082F48E2FEAB42C008F0411 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3082F48F2FEAB42C008F0411 /* Build configuration list for PBXNativeTarget "PersonalMusicHost" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3082F4902FEAB42C008F0411 /* Debug */,
+				3082F4912FEAB42C008F0411 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3082F4922FEAB42C008F0411 /* Build configuration list for PBXNativeTarget "PersonalMusicHostTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3082F4932FEAB42C008F0411 /* Debug */,
+				3082F4942FEAB42C008F0411 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3082F4952FEAB42C008F0411 /* Build configuration list for PBXNativeTarget "PersonalMusicHostUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3082F4962FEAB42C008F0411 /* Debug */,
+				3082F4972FEAB42C008F0411 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		308DB0512FEC155000F6AD66 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.2.0;
+			};
+		};
+		308DB0562FEC15BE00F6AD66 /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/google-api-objectivec-client-for-rest";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		30A1CD1C3004D84C0075B1E3 /* XCRemoteSwiftPackageReference "FFmpegKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kingslay/FFmpegKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.1.4;
+			};
+		};
+		30EA150C300FEB020014B577 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.16.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		306D111B300671EC009897B0 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 308DB0512FEC155000F6AD66 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		30EA150D300FEB1B0014B577 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30EA150C300FEB020014B577 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		30EA150F300FEB270014B577 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30EA150C300FEB020014B577 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		30EA1511300FEB380014B577 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 308DB0512FEC155000F6AD66 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		30EA1513300FEB4B0014B577 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30EA150C300FEB020014B577 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 3082F4662FEAB42A008F0411 /* Project object */;
+}

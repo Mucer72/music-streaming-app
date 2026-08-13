@@ -1,0 +1,27 @@
+disabled_rules: # rule identifiers to exclude from running
+  - trailing_whitespace
+  - line_length
+  - type_body_length
+  - file_length
+
+opt_in_rules: # some rules are only opt-in
+  - empty_count
+  - force_unwrapping
+  - discouraged_object_literal
+
+# Paths to include during linting
+included:
+  - PersonalMusicHost
+
+# Paths to ignore during linting
+excluded:
+  - Pods
+  - PersonalMusicHostTests
+  - PersonalMusicHostUITests
+
+# Configuration for specific rules
+force_unwrapping: error # encourage avoiding force unwraps
+
+indentation: 4
+
+reporter: "xcode" # reporter type (xcode, json, csv, checkstyle, junit, html, emoji)
