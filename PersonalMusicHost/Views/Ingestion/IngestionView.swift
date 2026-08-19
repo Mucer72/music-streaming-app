@@ -57,19 +57,36 @@ struct IngestionView: View {
                 }
             }
 
-            // Link to Database Management
-            NavigationLink(value: AppRoute.database) {
-                HStack {
-                    Image(systemName: "server.rack")
-                    Text("Database Management").fontWeight(.semibold)
+            // Navigation buttons row
+            HStack(spacing: 12) {
+                // Spotify Import
+                NavigationLink(value: AppRoute.spotifyImport) {
+                    HStack {
+                        Image(systemName: "music.note")
+                        Text("Spotify Import").fontWeight(.semibold)
+                    }
+                    .foregroundColor(.white)
+                    .padding(.vertical, 12)
+                    .padding(.horizontal, 24)
+                    .background(Color.green)
+                    .cornerRadius(12)
                 }
-                .foregroundColor(.white)
-                .padding(.vertical, 12)
-                .padding(.horizontal, 24)
-                .background(Color.blue)
-                .cornerRadius(12)
+                .buttonStyle(.plain)
+
+                // Database Management
+                NavigationLink(value: AppRoute.database) {
+                    HStack {
+                        Image(systemName: "server.rack")
+                        Text("Database Management").fontWeight(.semibold)
+                    }
+                    .foregroundColor(.white)
+                    .padding(.vertical, 12)
+                    .padding(.horizontal, 24)
+                    .background(Color.blue)
+                    .cornerRadius(12)
+                }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
             .padding(.top, 10)
         }
         .animation(.easeInOut, value: showLogs)

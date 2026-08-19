@@ -16,6 +16,7 @@ struct MainAppView: View {
     @StateObject private var playerViewModel   = PlayerViewModel()
     @StateObject private var databaseViewModel = DatabaseViewModel()
     @StateObject private var pipelineViewModel = PipelineViewModel()
+    @StateObject private var spotifyImportViewModel = SpotifyImportViewModel()
 
     var body: some View {
         NavigationStack {
@@ -35,6 +36,10 @@ struct MainAppView: View {
                             .environmentObject(databaseViewModel)
                     case .userProfile(let uid):
                         ProfileView(uid: uid)
+                            .environmentObject(authViewModel)
+                    case .spotifyImport:
+                        SpotifyImportView()
+                            .environmentObject(spotifyImportViewModel)
                             .environmentObject(authViewModel)
                     }
                 }

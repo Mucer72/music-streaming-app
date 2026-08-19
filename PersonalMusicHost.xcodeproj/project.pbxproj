@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		306D111C300671EC009897B0 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 306D111B300671EC009897B0 /* GoogleSignIn */; };
+		30A528163034996400A357CA /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 30A528153034996400A357CA /* FirebaseAuth */; };
+		30A528183034996B00A357CA /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 30A528173034996B00A357CA /* FirebaseCore */; };
+		30A5281A3034997400A357CA /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 30A528193034997400A357CA /* FirebaseFirestore */; };
 		30EA150E300FEB1B0014B577 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 30EA150D300FEB1B0014B577 /* FirebaseFirestore */; };
 		30EA1510300FEB270014B577 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 30EA150F300FEB270014B577 /* FirebaseAuth */; };
 		30EA1512300FEB380014B577 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 30EA1511300FEB380014B577 /* GoogleSignIn */; };
@@ -160,6 +163,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				306D111C300671EC009897B0 /* GoogleSignIn in Frameworks */,
+				30A5281A3034997400A357CA /* FirebaseFirestore in Frameworks */,
+				30A528183034996B00A357CA /* FirebaseCore in Frameworks */,
+				30A528163034996400A357CA /* FirebaseAuth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -260,6 +266,9 @@
 			name = MobileMusicStreaming;
 			packageProductDependencies = (
 				306D111B300671EC009897B0 /* GoogleSignIn */,
+				30A528153034996400A357CA /* FirebaseAuth */,
+				30A528173034996B00A357CA /* FirebaseCore */,
+				30A528193034997400A357CA /* FirebaseFirestore */,
 			);
 			productName = MobileMusicStreaming;
 			productReference = 306D10C4300669BE009897B0 /* MobileMusicStreaming.app */;
@@ -282,8 +291,6 @@
 				306D10D3300669C3009897B0 /* MobileMusicStreamingTests */,
 			);
 			name = MobileMusicStreamingTests;
-			packageProductDependencies = (
-			);
 			productName = MobileMusicStreamingTests;
 			productReference = 306D10D0300669C3009897B0 /* MobileMusicStreamingTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -305,8 +312,6 @@
 				306D10DD300669C3009897B0 /* MobileMusicStreamingUITests */,
 			);
 			name = MobileMusicStreamingUITests;
-			packageProductDependencies = (
-			);
 			productName = MobileMusicStreamingUITests;
 			productReference = 306D10DA300669C3009897B0 /* MobileMusicStreamingUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
@@ -355,8 +360,6 @@
 				3082F47E2FEAB42C008F0411 /* PersonalMusicHostTests */,
 			);
 			name = PersonalMusicHostTests;
-			packageProductDependencies = (
-			);
 			productName = PersonalMusicHostTests;
 			productReference = 3082F47B2FEAB42C008F0411 /* PersonalMusicHostTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -378,8 +381,6 @@
 				3082F4882FEAB42C008F0411 /* PersonalMusicHostUITests */,
 			);
 			name = PersonalMusicHostUITests;
-			packageProductDependencies = (
-			);
 			productName = PersonalMusicHostUITests;
 			productReference = 3082F4852FEAB42C008F0411 /* PersonalMusicHostUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
@@ -1151,6 +1152,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 308DB0512FEC155000F6AD66 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignIn;
+		};
+		30A528153034996400A357CA /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30EA150C300FEB020014B577 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		30A528173034996B00A357CA /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30EA150C300FEB020014B577 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		30A528193034997400A357CA /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30EA150C300FEB020014B577 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
 		};
 		30EA150D300FEB1B0014B577 /* FirebaseFirestore */ = {
 			isa = XCSwiftPackageProductDependency;

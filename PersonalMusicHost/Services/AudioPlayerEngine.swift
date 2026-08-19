@@ -59,6 +59,25 @@ class AudioPlayerEngine: ObservableObject {
         }
         let playerItem = AVPlayerItem(asset: asset)
         
+        playerItem.publisher(for: \.status)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] status in
+                guard let self = self else { return }
+                switch status {
+                case .readyToPlay:
+                    self.isBuffering = false
+                    print("🔊 [AudioPlayerEngine] PlayerItem READY TO PLAY")
+                case .failed:
+                    self.isBuffering = false
+                    self.isPlaying = false
+                    print("❌ [AudioPlayerEngine] PlayerItem FAILED: \(playerItem.error?.localizedDescription ?? "unknown error")")
+                case .unknown:
+                    break
+                @unknown default:
+                    break
+                }
+            }
+            .store(in: &cancellables)
         
         endItemCancellable?.cancel()
         endItemCancellable = NotificationCenter.default.publisher(for: .AVPlayerItemDidPlayToEndTime, object: playerItem)

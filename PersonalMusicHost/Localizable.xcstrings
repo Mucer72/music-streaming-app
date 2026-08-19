@@ -373,6 +373,9 @@
     "Cá nhân" : {
 
     },
+    "Cần đăng nhập Google để upload lên Drive." : {
+
+    },
     "Cancel" : {
       "localizations" : {
         "vi" : {
@@ -392,6 +395,9 @@
           }
         }
       }
+    },
+    "Chưa chọn" : {
+
     },
     "Close" : {
       "localizations" : {
@@ -422,6 +428,9 @@
           }
         }
       }
+    },
+    "Công khai trên thư viện:" : {
+
     },
     "Continue with Google" : {
       "localizations" : {
@@ -503,7 +512,13 @@
         }
       }
     },
+    "Dán link Spotify, ứng dụng sẽ tự tìm và tải bài hát rồi đẩy lên Drive." : {
+
+    },
     "Đang kiểm tra bảo mật..." : {
+
+    },
+    "Đang tìm..." : {
 
     },
     "Danh sách phát" : {
@@ -612,6 +627,9 @@
         }
       }
     },
+    "Fetch" : {
+
+    },
     "Format:" : {
       "localizations" : {
         "vi" : {
@@ -662,6 +680,15 @@
         }
       }
     },
+    "Hide Log" : {
+
+    },
+    "https://open.spotify.com/track/..." : {
+
+    },
+    "Import Log" : {
+
+    },
     "Import mode:" : {
       "localizations" : {
         "vi" : {
@@ -672,6 +699,9 @@
         }
       }
     },
+    "Import từ Spotify" : {
+
+    },
     "Joined: %@" : {
       "localizations" : {
         "vi" : {
@@ -681,6 +711,12 @@
           }
         }
       }
+    },
+    "Kết quả tìm kiếm" : {
+
+    },
+    "Khớp nhất" : {
+
     },
     "Language" : {
 
@@ -1100,6 +1136,9 @@
         }
       }
     },
+    "Show Log" : {
+
+    },
     "Shuffle" : {
       "localizations" : {
         "vi" : {
@@ -1153,6 +1192,12 @@
         }
       }
     },
+    "Spotify Import" : {
+
+    },
+    "Spotify Metadata" : {
+
+    },
     "Start Pipeline" : {
       "localizations" : {
         "vi" : {
@@ -1196,6 +1241,9 @@
     "System Logs" : {
 
     },
+    "Thể loại:" : {
+
+    },
     "This album has no tracks yet." : {
       "localizations" : {
         "vi" : {
@@ -1237,6 +1285,9 @@
           }
         }
       }
+    },
+    "Toggle import log console" : {
+
     },
     "Track #:" : {
       "localizations" : {
@@ -1359,6 +1410,9 @@
         }
       }
     },
+    "Xem thêm các kết quả khác..." : {
+
+    },
     "Year" : {
       "localizations" : {
         "vi" : {
@@ -1378,6 +1432,12 @@
           }
         }
       }
+    },
+    "YouTube" : {
+
+    },
+    "YT Music" : {
+
     }
   },
   "version" : "1.0"

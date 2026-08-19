@@ -12,7 +12,10 @@ enum AppRoute: Hashable {
     case ingestion
     case database
     case userProfile(String)
+    case spotifyImport
 }
+
+
 
 enum OutputFormat: String, CaseIterable {
     case aac = "AAC"
