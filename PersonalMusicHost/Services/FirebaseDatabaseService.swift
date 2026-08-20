@@ -29,15 +29,19 @@ class FirebaseDatabaseService {
 
     // 1. Tải toàn bộ danh sách bài hát
     func fetchAllTracks() async throws -> [TrackRecord] {
-        // Giả sử collection của bạn tên là "tracks"
-        let snapshot = try await db.collection("tracks")
-            .order(by: "albumId")
-            .order(by: "trackNumber")
-            .getDocuments()
-
-        return try snapshot.documents.compactMap { document in
-            try document.data(as: TrackRecord.self)
+        let snapshot = try await db.collection("tracks").getDocuments()
+        var tracks = snapshot.documents.compactMap {
+            try? $0.data(as: TrackRecord.self)
         }
+        tracks.sort {
+            let album0 = $0.albumId ?? ""
+            let album1 = $1.albumId ?? ""
+            if album0 != album1 {
+                return album0 < album1
+            }
+            return $0.trackNumber < $1.trackNumber
+        }
+        return tracks
     }
 
     // 2. Cập nhật thông tin (Sửa)
@@ -146,12 +150,19 @@ class FirebaseDatabaseService {
         ])
         let snapshot = try await db.collection("tracks")
             .whereFilter(filter)
-            .order(by: "albumId")
-            .order(by: "trackNumber")
             .getDocuments()
-        return snapshot.documents.compactMap {
+        var tracks = snapshot.documents.compactMap {
             try? $0.data(as: TrackRecord.self)
         }
+        tracks.sort {
+            let album0 = $0.albumId ?? ""
+            let album1 = $1.albumId ?? ""
+            if album0 != album1 {
+                return album0 < album1
+            }
+            return $0.trackNumber < $1.trackNumber
+        }
+        return tracks
     }
     
     // Lấy danh sách Album cho Dashboard (Nhạc của mình + Nhạc Public)

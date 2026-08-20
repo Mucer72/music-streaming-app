@@ -4,7 +4,7 @@
 //
 //  Cloud database management screen. Orchestrates the toolbar,
 //  search/sort bar, and data table for tracks, albums, and playlists.
-//  All row components live in Database/Components/.
+//  Cross-platform compatible for macOS and iOS.
 //
 
 import SwiftUI
@@ -21,25 +21,57 @@ struct DatabaseManagementView: View {
             // ─── TOOLBAR ───────────────────────────────────────────────
             DatabaseToolbar()
 
-            // ─── SEARCH & SORT ─────────────────────────────────────────
-            HStack {
-                TextField("🔍 Search by track name...", text: $viewModel.searchText)
+            // ─── SEARCH & SORT BAR ─────────────────────────────────────
+            HStack(spacing: 12) {
+                #if os(macOS)
+                TextField("🔍 Tìm kiếm bài hát...", text: $viewModel.searchText)
                     .textFieldStyle(.roundedBorder)
-
-                Picker("Sort:", selection: $viewModel.sortOption) {
-                    Text("By Album").tag("albumId")
-                    Text("By Title").tag("title")
-                    Text("By Artist").tag("artist")
+                #else
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(.secondary)
+                    TextField("Tìm kiếm theo tên...", text: $viewModel.searchText)
+                    if !viewModel.searchText.isEmpty {
+                        Button(action: { viewModel.searchText = "" }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(.secondary)
+                        }
+                    }
                 }
-                .pickerStyle(.menu)
-                .frame(width: 200)
-                // Disable sort while searching to avoid Firestore composite index conflicts
-                .disabled(!viewModel.searchText.isEmpty)
+                .padding(8)
+                .background(Color(.secondarySystemBackground))
+                .cornerRadius(10)
+                #endif
+
+                if viewModel.managementMode == .track {
+                    Menu {
+                        Button(action: { viewModel.sortOption = "albumId" }) {
+                            Label("Theo Album", systemImage: viewModel.sortOption == "albumId" ? "checkmark" : "")
+                        }
+                        Button(action: { viewModel.sortOption = "title" }) {
+                            Label("Theo Tên bài hát", systemImage: viewModel.sortOption == "title" ? "checkmark" : "")
+                        }
+                        Button(action: { viewModel.sortOption = "artist" }) {
+                            Label("Theo Nghệ sĩ", systemImage: viewModel.sortOption == "artist" ? "checkmark" : "")
+                        }
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "arrow.up.arrow.down")
+                            #if os(macOS)
+                            Text("Sắp xếp")
+                            #endif
+                        }
+                    }
+                    .disabled(!viewModel.searchText.isEmpty)
+                    #if os(macOS)
+                    .frame(width: 120)
+                    #endif
+                }
             }
             .padding(.horizontal)
-            .padding(.vertical, 10)
+            .padding(.vertical, 8)
 
-            // ─── DATA TABLE ────────────────────────────────────────────
+            // ─── DATA LIST ─────────────────────────────────────────────
             if viewModel.managementMode == .album {
                 List(selection: $viewModel.selectedAlbumIDs) {
                     ForEach(viewModel.albums, id: \.id) { album in
@@ -51,6 +83,9 @@ struct DatabaseManagementView: View {
                     }
                 }
                 .listStyle(.inset)
+                .refreshable {
+                    await viewModel.refreshData()
+                }
 
             } else if viewModel.managementMode == .playlist {
                 List(selection: $viewModel.selectedPlaylistIDs) {
@@ -63,6 +98,9 @@ struct DatabaseManagementView: View {
                     }
                 }
                 .listStyle(.inset)
+                .refreshable {
+                    await viewModel.refreshData()
+                }
 
             } else {
                 List(selection: $viewModel.selectedTrackIDs) {
@@ -84,18 +122,36 @@ struct DatabaseManagementView: View {
                     if viewModel.isFetchingMore {
                         HStack {
                             Spacer()
-                            ProgressView("Loading more data...")
+                            ProgressView("Đang tải thêm...")
                             Spacer()
                         }
                         .padding()
                     }
                 }
                 .listStyle(.inset)
+                .refreshable {
+                    await viewModel.refreshData()
+                }
             }
         }
+        .navigationTitle("Quản lý Thư viện")
+        #if os(iOS)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                if viewModel.isLoading {
+                    ProgressView().controlSize(.small)
+                } else {
+                    Button(action: {
+                        Task { await viewModel.refreshData() }
+                    }) {
+                        Image(systemName: "arrow.triangle.2.circlepath")
+                    }
+                }
+            }
+        }
+        #endif
         .onAppear {
-            // Chỉ fetch lần đầu tiên vào màn hình. Lần sau sử dụng data trong bộ nhớ.
-            // Kéo xuống đầu danh sách để làm mới dữ liệu (pull-to-refresh).
             if !viewModel.hasLoadedInitially {
                 viewModel.loadInitialData()
             }

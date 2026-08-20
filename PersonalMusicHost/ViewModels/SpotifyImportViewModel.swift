@@ -3,15 +3,16 @@
 //  PersonalMusicHost
 //
 //  Điều phối toàn bộ luồng Spotify Import:
-//  fetch metadata → search → score → download → tag → upload → Firestore
+//  fetch metadata → search → score → download → tag → upload Drive → Firestore
 //
-//  Upload logic tái sử dụng 100% từ GoogleDriveService và FirebaseDatabaseService.
+//  Upload logic tái sử dụng từ GoogleDriveService và FirebaseDatabaseService.
 //
 
 import Foundation
 import SwiftUI
 import Combine
 import AVFoundation
+import FirebaseAuth
 
 @MainActor
 class SpotifyImportViewModel: ObservableObject {
@@ -23,6 +24,7 @@ class SpotifyImportViewModel: ObservableObject {
 
     // Kết quả trung gian
     @Published var fetchedMetadata: SpotifyTrackMetadata?
+    @Published var searchResults: [TrackMetadataItem] = [] // Kết quả tìm kiếm trực tiếp
     @Published var candidates: [AudioCandidate] = []
     @Published var selectedCandidate: AudioCandidate?
     @Published var taggedFileURL: URL?
@@ -34,6 +36,7 @@ class SpotifyImportViewModel: ObservableObject {
 
     // Tiến trình & log
     @Published var progress: Double = 0.0
+    @Published var downloadPercentage: Double = 0.0
     @Published var logs: [String] = []
     @Published var errorMessage: String?
 
@@ -41,23 +44,26 @@ class SpotifyImportViewModel: ObservableObject {
 
     private let metadataService: SpotifyMetadataServiceProtocol
     private let importService: SpotifyImportServiceProtocol
+    private let searchService = ITunesSearchService()
     private let driveService = GoogleDriveService.shared
     private let databaseService = FirebaseDatabaseService.shared
 
     // MARK: - Init
 
-    nonisolated init(
-        metadataService: SpotifyMetadataServiceProtocol = SpotifyMetadataService(),
-        importService: SpotifyImportServiceProtocol = SpotifyImportService()
+    init(
+        metadataService: SpotifyMetadataServiceProtocol? = nil,
+        importService: SpotifyImportServiceProtocol? = nil
     ) {
-        self.metadataService = metadataService
-        self.importService = importService
-
+        self.metadataService = metadataService ?? SpotifyMetadataService()
+        self.importService = importService ?? SpotifyImportService()
 
         // Tải danh sách genres từ Firestore
-        Task { @MainActor in
+        Task {
             if let genres = try? await FirebaseDatabaseService.shared.fetchGenres() {
                 self.availableGenres = genres
+                if self.selectedGenreId.isEmpty, let first = genres.first?.id {
+                    self.selectedGenreId = first
+                }
             }
         }
     }
@@ -66,25 +72,35 @@ class SpotifyImportViewModel: ObservableObject {
 
     /// Bước 1: Người dùng bấm "Fetch" → Lấy metadata → Tìm kiếm → Tính điểm
     func startImport() {
-        guard !spotifyURLText.trimmingCharacters(in: .whitespaces).isEmpty else { return }
-        let urlString = spotifyURLText.trimmingCharacters(in: .whitespaces)
-        guard let url = URL(string: urlString) else {
+        let trimmed = spotifyURLText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        guard let url = URL(string: trimmed) else {
             setFailed("URL không hợp lệ.")
             return
         }
 
         Task {
-            defer { if importState == .fetchingMetadata { importState = .idle } }
+            defer {
+                if importState == .fetchingMetadata {
+                    importState = .idle
+                }
+            }
 
-            // Nếu không phải là link Spotify -> Bypass Search (Dùng yt-dlp lấy metadata trực tiếp)
-            if !urlString.lowercased().contains("spotify") {
-                await handleDirectLinkBypass(urlString: urlString)
+            // Nếu là URL, xử lý luồng Link
+            if trimmed.lowercased().hasPrefix("http") {
+                if !trimmed.lowercased().contains("spotify") {
+                    await handleDirectLinkBypass(urlString: trimmed)
+                    return
+                }
+            } else {
+                // Nếu không phải URL, coi như là từ khóa tìm kiếm
+                await handleTextSearch(query: trimmed)
                 return
             }
 
-            // --- Fetch Metadata (Luồng Spotify bình thường) ---
+            // --- Fetch Metadata (Luồng Spotify chính thức) ---
             importState = .fetchingMetadata
-            progress = 0.1
+            progress = 0.15
             addLog("🎵 Đang lấy thông tin từ Spotify...")
 
             let metadata: SpotifyTrackMetadata
@@ -100,12 +116,12 @@ class SpotifyImportViewModel: ObservableObject {
             // --- Auto-match Genre ---
             autoMatchGenre(from: metadata)
 
-            // --- Search Candidates ---
+            // --- Search Candidates (Tìm trực tiếp trên YouTube Music) ---
             importState = .searching
-            progress = 0.25
-            addLog("🔍 Đang tìm kiếm bài hát tương đương...")
+            progress = 0.35
+            addLog("🔍 Đang tìm kiếm trên YouTube Music...")
 
-            let searchQuery = "\(metadata.artist) \(metadata.title) official audio"
+            let searchQuery = "\(metadata.artist) \(metadata.title)"
             let found: [AudioCandidate]
             do {
                 found = try await importService.searchCandidates(
@@ -113,7 +129,7 @@ class SpotifyImportViewModel: ObservableObject {
                     metadata: metadata
                 )
                 candidates = found
-                addLog("📋 Tìm thấy \(found.count) ứng viên, đang tính điểm...")
+                addLog("📋 Tìm thấy \(found.count) ứng viên, đang xếp hạng...")
             } catch {
                 setFailed("Tìm kiếm thất bại: \(error.localizedDescription)")
                 return
@@ -121,7 +137,7 @@ class SpotifyImportViewModel: ObservableObject {
 
             // --- Score & Select ---
             importState = .scoring
-            progress = 0.4
+            progress = 0.50
 
             let scoredCandidates = importService.scoreCandidates(
                 from: found,
@@ -131,19 +147,128 @@ class SpotifyImportViewModel: ObservableObject {
             self.candidates = scoredCandidates
 
             guard let best = scoredCandidates.first, best.score >= 0.2 else {
-                setFailed(SpotifyImportError.noMatchFound.localizedDescription ?? "Không tìm thấy bài phù hợp")
+                setFailed(SpotifyImportError.noMatchFound.localizedDescription)
                 return
             }
 
             selectedCandidate = best
-            addLog("🏆 Chọn mặc định: \"\(best.title)\" (score: \(String(format: "%.2f", best.score)))")
+            addLog("🏆 Chọn tối ưu: \"\(best.title)\" (điểm: \(String(format: "%.2f", best.score)))")
             importState = .readyToUpload
-            progress = 0.5
-            addLog("⏸️ Chờ xác nhận (bạn có thể tải lên ngay)...")
+            progress = 0.55
+            addLog("⏸️ Sẵn sàng! Bạn có thể xem lại thông tin và bấm Import.")
+        }
+    }
+    
+    /// Xử lý tìm kiếm trực tiếp từ từ khóa (Sử dụng iTunes API)
+    private func handleTextSearch(query: String) async {
+        importState = .fetchingMetadata
+        progress = 0.1
+        addLog("🔍 Đang tìm kiếm bài hát trên Apple Music/iTunes: \"\(query)\"...")
+        do {
+            let results = try await searchService.search(query: query)
+            if results.isEmpty {
+                setFailed("Không tìm thấy kết quả nào cho \"\(query)\".")
+            } else {
+                self.searchResults = results
+                addLog("✅ Đã tìm thấy \(results.count) kết quả. Vui lòng chọn một bài hát.")
+                importState = .idle // Trả về idle để user chọn kết quả
+            }
+        } catch {
+            setFailed("Lỗi tìm kiếm: \(error.localizedDescription)")
+        }
+    }
+    
+    /// Khi người dùng chọn 1 kết quả từ danh sách tìm kiếm trực tiếp
+    func selectSearchResult(_ track: TrackMetadataItem) {
+        // Clear search results
+        self.searchResults = []
+        
+        // Convert to SpotifyTrackMetadata format to reuse the pipeline
+        var coverData: Data? = nil
+        // Tạm thời lấy thumbnail data cho UI nhanh
+        
+        let mockMetadata = SpotifyTrackMetadata(
+            spotifyTrackID: UUID().uuidString.prefix(12).lowercased(),
+            title: track.trackName,
+            artist: track.artistName,
+            album: track.collectionName ?? "Unknown Album",
+            coverURL: track.coverURL,
+            coverImageData: nil, // Will be fetched later if needed, but we can rely on url
+            spotifyGenreHint: nil,
+            isrc: nil
+        )
+        
+        self.fetchedMetadata = mockMetadata
+        self.spotifyURLText = "\(track.artistName) - \(track.trackName)"
+        
+        // Immediately show loading state so UI doesn't look stuck
+        importState = .fetchingMetadata
+        progress = 0.2
+        addLog("🖼️ Đang tải thông tin và ảnh bìa cho bài hát...")
+        
+        Task {
+            // Tải ảnh bìa
+            if let url = track.coverURL, let (data, _) = try? await URLSession.shared.data(from: url) {
+                await MainActor.run {
+                    self.fetchedMetadata = SpotifyTrackMetadata(
+                        spotifyTrackID: mockMetadata.spotifyTrackID,
+                        title: mockMetadata.title,
+                        artist: mockMetadata.artist,
+                        album: mockMetadata.album,
+                        coverURL: mockMetadata.coverURL,
+                        coverImageData: data,
+                        spotifyGenreHint: mockMetadata.spotifyGenreHint,
+                        isrc: mockMetadata.isrc
+                    )
+                }
+            }
+            
+            // Tiếp tục luồng search ứng viên YouTube Music
+            importState = .searching
+            progress = 0.35
+            addLog("🔍 Đang tìm bản âm thanh cho: \"\(track.trackName)\"...")
+
+            let searchQuery = "\(track.artistName) \(track.trackName)"
+            let found: [AudioCandidate]
+            do {
+                // Ensure fetchedMetadata is the latest with image data
+                let currentMeta = self.fetchedMetadata ?? mockMetadata
+                found = try await importService.searchCandidates(
+                    query: searchQuery,
+                    metadata: currentMeta
+                )
+                self.candidates = found
+                addLog("📋 Tìm thấy \(found.count) ứng viên, đang xếp hạng...")
+            } catch {
+                setFailed("Tìm kiếm thất bại: \(error.localizedDescription)")
+                return
+            }
+
+            importState = .scoring
+            progress = 0.50
+
+            let currentMeta = self.fetchedMetadata ?? mockMetadata
+            let scoredCandidates = importService.scoreCandidates(
+                from: found,
+                metadata: currentMeta
+            )
+            
+            self.candidates = scoredCandidates
+
+            guard let best = scoredCandidates.first, best.score >= 0.2 else {
+                setFailed(SpotifyImportError.noMatchFound.localizedDescription)
+                return
+            }
+
+            self.selectedCandidate = best
+            addLog("🏆 Chọn tối ưu: \"\(best.title)\" (điểm: \(String(format: "%.2f", best.score)))")
+            importState = .readyToUpload
+            progress = 0.55
+            addLog("⏸️ Sẵn sàng! Bạn có thể xem lại thông tin và bấm Import.")
         }
     }
 
-    /// Xử lý Bypass Search cho link trực tiếp (Bandcamp, Mixcloud, Audiomack, YouTube...)
+    /// Xử lý Bypass Search cho link trực tiếp (YouTube, SoundCloud, Direct URLs...)
     private func handleDirectLinkBypass(urlString: String) async {
         importState = .fetchingMetadata
         progress = 0.2
@@ -158,10 +283,9 @@ class SpotifyImportViewModel: ObservableObject {
             
             var thumbData: Data? = nil
             if let tStr = thumbUrlString, let tUrl = URL(string: tStr) {
-                thumbData = try? Data(contentsOf: tUrl)
+                thumbData = try? await URLSession.shared.data(from: tUrl).0
             }
             
-            // Tạo Metadata giả
             let mockMetadata = SpotifyTrackMetadata(
                 spotifyTrackID: UUID().uuidString.prefix(12).lowercased(),
                 title: title,
@@ -174,7 +298,6 @@ class SpotifyImportViewModel: ObservableObject {
             )
             self.fetchedMetadata = mockMetadata
             
-            // Tạo Candidate duy nhất
             let candidateId = json["id"] as? String ?? UUID().uuidString
             let candidate = AudioCandidate(
                 videoId: candidateId,
@@ -182,7 +305,7 @@ class SpotifyImportViewModel: ObservableObject {
                 title: title,
                 uploaderName: artist,
                 durationSeconds: Int(duration),
-                streamURL: URL(string: urlString) // Sử dụng streamURL làm nguồn chứa original urlString
+                streamURL: URL(string: urlString)
             )
             
             self.candidates = [candidate]
@@ -190,7 +313,7 @@ class SpotifyImportViewModel: ObservableObject {
             
             addLog("✅ Trích xuất thành công: \(title) - \(artist)")
             importState = .readyToUpload
-            progress = 0.5
+            progress = 0.55
         } catch {
             setFailed("Lỗi trích xuất yt-dlp: \(error.localizedDescription)")
         }
@@ -202,7 +325,11 @@ class SpotifyImportViewModel: ObservableObject {
               let candidate = selectedCandidate else { return }
 
         Task {
+            var tempFilesToCleanup: [URL] = []
             defer {
+                for fileURL in tempFilesToCleanup {
+                    try? FileManager.default.removeItem(at: fileURL)
+                }
                 if importState == .uploading || importState == .tagging || importState == .downloading {
                     importState = .idle
                 }
@@ -210,13 +337,22 @@ class SpotifyImportViewModel: ObservableObject {
 
             // --- Download ---
             importState = .downloading
-            progress = 0.55
-            addLog("⬇️ Đang tải audio: \"\(candidate.title)\"...")
+            progress = 0.60
+            downloadPercentage = 0.0
+            addLog("⬇️ Đang tải audio chất lượng cao: \"\(candidate.title)\"...")
+            addLog("⏳ Quá trình tải có thể mất từ 10-30 giây, vui lòng chờ...")
 
             var rawURL: URL?
             do {
-                rawURL = try await importService.downloadAudio(candidate: candidate)
-                addLog("✅ Tải xong: \(rawURL!.lastPathComponent)")
+                rawURL = try await importService.downloadAudio(candidate: candidate) { percent in
+                    Task { @MainActor in
+                        self.downloadPercentage = percent
+                    }
+                }
+                if let raw = rawURL {
+                    tempFilesToCleanup.append(raw)
+                    addLog("✅ Tải xong: \(raw.lastPathComponent)")
+                }
             } catch let err {
                 setFailed("Tải audio thất bại: \(err.localizedDescription)")
                 return
@@ -224,39 +360,39 @@ class SpotifyImportViewModel: ObservableObject {
 
             guard let finalRawURL = rawURL else { return }
 
-            // --- Tag ---
+            // --- Tag Metadata ---
             importState = .tagging
-            progress = 0.65
-            addLog("🏷️ Đang chuẩn bị và gắn metadata...")
+            progress = 0.70
+            addLog("🏷️ Đang gắn tag metadata & artwork...")
 
             var finalTaggedURL: URL = finalRawURL
             do {
                 let tagged = try await importService.tagAudioFile(at: finalRawURL, with: metadata)
                 finalTaggedURL = tagged
                 taggedFileURL = tagged
-                addLog("✅ Đã xử lý audio: \(tagged.lastPathComponent)")
                 if tagged != finalRawURL {
-                    try? FileManager.default.removeItem(at: finalRawURL)
+                    tempFilesToCleanup.append(tagged)
                 }
+                addLog("✅ Đã xử lý audio: \(tagged.lastPathComponent)")
             } catch {
-                addLog("⚠️ Gắn metadata atom gặp lỗi (\(error.localizedDescription)), tiếp tục dùng file audio tải về...")
+                addLog("⚠️ Gắn metadata atom cảnh báo: \(error.localizedDescription), tiếp tục với file tải về...")
                 finalTaggedURL = finalRawURL
                 taggedFileURL = finalRawURL
             }
 
-            // Tính duration và kiểm tra size từ file đã tag/xử lý
+            // Tính duration thực tế từ file đã xử lý
             let durationSeconds = await computeDuration(of: finalTaggedURL)
             let attr = try? FileManager.default.attributesOfItem(atPath: finalTaggedURL.path)
             let fileSize = attr?[.size] as? UInt64 ?? 0
-            addLog("📊 File info: \(durationSeconds)s, \(fileSize) bytes")
+            addLog("📊 Thời lượng: \(String(format: "%.1f", durationSeconds))s (\(fileSize / 1024) KB)")
 
-            // --- Upload Cover ---
+            // --- Upload Cover Image ---
             importState = .uploading
-            progress = 0.70
+            progress = 0.78
             var uploadedCoverDriveID: String = ""
 
             if let coverData = metadata.coverImageData {
-                addLog("🖼️ Đang upload ảnh bìa lên Drive...")
+                addLog("🖼️ Đang upload ảnh bìa lên Google Drive...")
                 do {
                     uploadedCoverDriveID = try await uploadCoverData(
                         coverData,
@@ -264,12 +400,12 @@ class SpotifyImportViewModel: ObservableObject {
                     )
                     addLog("✅ Ảnh bìa đã upload: \(uploadedCoverDriveID)")
                 } catch {
-                    addLog("⚠️ Lỗi upload ảnh bìa (tiếp tục không có cover): \(error.localizedDescription)")
+                    addLog("⚠️ Upload ảnh bìa thất bại (tiếp tục không có ảnh bìa): \(error.localizedDescription)")
                 }
             }
 
             // --- Upload Audio ---
-            progress = 0.80
+            progress = 0.86
             addLog("☁️ Đang upload audio lên Google Drive...")
 
             let audioFileID: String
@@ -282,8 +418,8 @@ class SpotifyImportViewModel: ObservableObject {
             }
 
             // --- Save to Firestore ---
-            progress = 0.92
-            addLog("💾 Đang đồng bộ Firestore...")
+            progress = 0.94
+            addLog("💾 Đang đồng bộ dữ liệu vào Firestore...")
 
             do {
                 try await saveToFirestore(
@@ -292,18 +428,15 @@ class SpotifyImportViewModel: ObservableObject {
                     audioFileID: audioFileID,
                     coverDriveID: uploadedCoverDriveID.isEmpty ? nil : uploadedCoverDriveID
                 )
-                addLog("✅ Lưu database thành công!")
+                addLog("✅ Lưu Firestore thành công!")
             } catch {
                 setFailed("Lưu Firestore thất bại: \(error.localizedDescription)")
                 return
             }
 
-            // Cleanup temp file
-            try? FileManager.default.removeItem(at: finalTaggedURL)
-
             progress = 1.0
             importState = .completed
-            addLog("🎉 IMPORT HOÀN TẤT! Bài hát đã có trong thư viện.")
+            addLog("🎉 IMPORT HOÀN TẤT! Bài hát đã sẵn sàng để phát trong thư viện.")
             NotificationCenter.default.post(name: .init("LibraryNeedsRefresh"), object: nil)
         }
     }
@@ -313,13 +446,16 @@ class SpotifyImportViewModel: ObservableObject {
         spotifyURLText = ""
         importState = .idle
         fetchedMetadata = nil
+        searchResults = []
         candidates = []
         selectedCandidate = nil
         taggedFileURL = nil
         progress = 0.0
         logs = []
         errorMessage = nil
-        selectedGenreId = ""
+        if let first = availableGenres.first?.id {
+            selectedGenreId = first
+        }
     }
 
     // MARK: - Logging
@@ -343,7 +479,6 @@ class SpotifyImportViewModel: ObservableObject {
               let mappedName = SpotifyMetadataService.mapSpotifyGenreHint(hint) else {
             return
         }
-        // Fuzzy match với danh sách genre trong Firestore
         let matched = availableGenres.first { genre in
             genre.name.lowercased().contains(mappedName.lowercased()) ||
             mappedName.lowercased().contains(genre.name.lowercased())
@@ -354,16 +489,15 @@ class SpotifyImportViewModel: ObservableObject {
         }
     }
 
-    /// Đọc thời lượng thực của file âm thanh đã được tag.
+    /// Đọc thời lượng thực của file âm thanh.
     private func computeDuration(of url: URL) async -> Double {
         let asset = AVURLAsset(url: url)
         guard let duration = try? await asset.load(.duration) else { return 0.0 }
         return CMTimeGetSeconds(duration)
     }
 
-    /// Upload cover từ Data (không cần file tạm trên disk).
+    /// Upload cover từ Data.
     private func uploadCoverData(_ data: Data, fileName: String) async throws -> String {
-        // Ghi tạm ra file để dùng uploadImageFile hiện có
         let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
         try data.write(to: tempURL)
         defer { try? FileManager.default.removeItem(at: tempURL) }
@@ -400,18 +534,18 @@ class SpotifyImportViewModel: ObservableObject {
         return fileID
     }
 
-    /// Lưu TrackRecord vào Firestore.
+    /// Lưu TrackRecord vào Firestore (chuẩn hoá albumId: nil cho single track).
     private func saveToFirestore(
         metadata: SpotifyTrackMetadata,
         durationSeconds: Double,
         audioFileID: String,
         coverDriveID: String?
     ) async throws {
-        guard let uid = FirebaseAuthService.shared.currentUID else {
+        guard let uid = FirebaseAuthService.shared.currentUID ?? Auth.auth().currentUser?.uid else {
             throw NSError(
                 domain: "SpotifyImport",
                 code: 401,
-                userInfo: [NSLocalizedDescriptionKey: "Chưa đăng nhập."]
+                userInfo: [NSLocalizedDescriptionKey: "Bạn chưa đăng nhập."]
             )
         }
 
@@ -420,7 +554,7 @@ class SpotifyImportViewModel: ObservableObject {
             title: metadata.title,
             artist: metadata.artist,
             duration: durationSeconds,
-            albumId: metadata.album,
+            albumId: metadata.album.isEmpty ? "Single" : metadata.album,
             trackNumber: 1,
             releaseYear: nil,
             description: nil,
@@ -435,5 +569,4 @@ class SpotifyImportViewModel: ObservableObject {
         )
         try await databaseService.saveTrack(record)
     }
-    
 }

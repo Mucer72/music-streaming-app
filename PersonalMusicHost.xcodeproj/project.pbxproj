@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		306D111C300671EC009897B0 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 306D111B300671EC009897B0 /* GoogleSignIn */; };
+		3093AEE73036C887008EB732 /* YoutubeDL in Frameworks */ = {isa = PBXBuildFile; productRef = 3093AEE63036C887008EB732 /* YoutubeDL */; };
 		30A528163034996400A357CA /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 30A528153034996400A357CA /* FirebaseAuth */; };
 		30A528183034996B00A357CA /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 30A528173034996B00A357CA /* FirebaseCore */; };
 		30A5281A3034997400A357CA /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 30A528193034997400A357CA /* FirebaseFirestore */; };
@@ -65,15 +66,25 @@
 				Models/AppModels.swift,
 				Models/Environment.swift,
 				Models/FirestoreModels.swift,
+				Models/SpotifyModels.swift,
+				Models/TrackMetadataItem.swift,
 				Services/AudioPlayerEngine.swift,
 				Services/FirebaseAuthService.swift,
 				Services/FirebaseDatabaseService.swift,
 				Services/GoogleDriveService.swift,
+				Services/iOSAudioExtractionService.swift,
+				Services/ITunesSearchService.swift,
+				Services/SearchServiceProtocol.swift,
 				Services/SecureDriveImage.swift,
+				Services/SpotifyImportService.swift,
+				Services/SpotifyMetadataService.swift,
+				Services/YtDlpService.swift,
 				ViewModels/AuthViewModel.swift,
+				ViewModels/DatabaseViewModel.swift,
 				ViewModels/PlayerViewModel.swift,
 				ViewModels/PlaylistManagerViewModel.swift,
 				ViewModels/ProfileViewModel.swift,
+				ViewModels/SpotifyImportViewModel.swift,
 				Views/App/MainAppView.swift,
 				Views/Common/PanelButtons.swift,
 				Views/Common/SectionView.swift,
@@ -89,6 +100,17 @@
 				Views/Dashboard/MusicDashboardView.swift,
 				Views/Dashboard/Panels/AlbumDetailPanelView.swift,
 				Views/Dashboard/Panels/TrackDetailPanelView.swift,
+				Views/Database/Components/AlbumRowView.swift,
+				Views/Database/Components/DatabaseToolbar.swift,
+				Views/Database/Components/PlaylistRowView.swift,
+				Views/Database/Components/TrackRowView.swift,
+				Views/Database/DatabaseManagementView.swift,
+				Views/Database/EditAlbumView.swift,
+				Views/Database/EditPlaylistView.swift,
+				Views/Database/EditTrackView.swift,
+				Views/Ingestion/Components/BackgroundDownloadIndicator.swift,
+				Views/Ingestion/Components/ImportConsoleView.swift,
+				Views/Ingestion/SpotifyImportView.swift,
 				Views/Login/LoginView.swift,
 				Views/Player/MiniPlayerView.swift,
 				Views/Player/TrackCarouselView.swift,
@@ -163,6 +185,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				306D111C300671EC009897B0 /* GoogleSignIn in Frameworks */,
+				3093AEE73036C887008EB732 /* YoutubeDL in Frameworks */,
 				30A5281A3034997400A357CA /* FirebaseFirestore in Frameworks */,
 				30A528183034996B00A357CA /* FirebaseCore in Frameworks */,
 				30A528163034996400A357CA /* FirebaseAuth in Frameworks */,
@@ -269,6 +292,7 @@
 				30A528153034996400A357CA /* FirebaseAuth */,
 				30A528173034996B00A357CA /* FirebaseCore */,
 				30A528193034997400A357CA /* FirebaseFirestore */,
+				3093AEE63036C887008EB732 /* YoutubeDL */,
 			);
 			productName = MobileMusicStreaming;
 			productReference = 306D10C4300669BE009897B0 /* MobileMusicStreaming.app */;
@@ -431,8 +455,8 @@
 			packageReferences = (
 				308DB0512FEC155000F6AD66 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				308DB0562FEC15BE00F6AD66 /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */,
-				30A1CD1C3004D84C0075B1E3 /* XCRemoteSwiftPackageReference "FFmpegKit" */,
 				30EA150C300FEB020014B577 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				3093AEE53036C887008EB732 /* XCRemoteSwiftPackageReference "YoutubeDL-iOS" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 3082F46F2FEAB42A008F0411 /* Products */;
@@ -1129,12 +1153,12 @@
 				kind = branch;
 			};
 		};
-		30A1CD1C3004D84C0075B1E3 /* XCRemoteSwiftPackageReference "FFmpegKit" */ = {
+		3093AEE53036C887008EB732 /* XCRemoteSwiftPackageReference "YoutubeDL-iOS" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/kingslay/FFmpegKit.git";
+			repositoryURL = "https://github.com/kewlbear/YoutubeDL-iOS.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 6.1.4;
+				minimumVersion = 0.0.9;
 			};
 		};
 		30EA150C300FEB020014B577 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
@@ -1152,6 +1176,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 308DB0512FEC155000F6AD66 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignIn;
+		};
+		3093AEE63036C887008EB732 /* YoutubeDL */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3093AEE53036C887008EB732 /* XCRemoteSwiftPackageReference "YoutubeDL-iOS" */;
+			productName = YoutubeDL;
 		};
 		30A528153034996400A357CA /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;

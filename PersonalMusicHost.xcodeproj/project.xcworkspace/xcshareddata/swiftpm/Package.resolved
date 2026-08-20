@@ -1,5 +1,5 @@
 {
-  "originHash" : "df899e2e874f6a1fd32f374d0b2728443426d90454540d19c5c96fe0f217508d",
+  "originHash" : "e6ffd8f3a2d3d8403bbf2d99b640f74b995fa3407464990f5e2de72ef47ad0a4",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -29,12 +29,21 @@
       }
     },
     {
-      "identity" : "ffmpegkit",
+      "identity" : "ffmpeg-ios-lame",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/kingslay/FFmpegKit.git",
+      "location" : "https://github.com/kewlbear/FFmpeg-iOS-Lame",
       "state" : {
-        "revision" : "c32be9bfb628042737ad3ef622e930c5c7b15954",
-        "version" : "6.1.4"
+        "revision" : "1808fa5a1263c5e216646cd8421fc7dcb70520cc",
+        "version" : "0.0.6-b20230730-000000"
+      }
+    },
+    {
+      "identity" : "ffmpeg-ios-support",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kewlbear/FFmpeg-iOS-Support",
+      "state" : {
+        "revision" : "be3bd9149ac53760e8725652eee99c405b2be47a",
+        "version" : "0.0.2"
       }
     },
     {
@@ -161,6 +170,33 @@
       "state" : {
         "revision" : "f4a19a3c313dc2616c70bb49d29a799fb16be837",
         "version" : "2.4.1"
+      }
+    },
+    {
+      "identity" : "python-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kewlbear/Python-iOS.git",
+      "state" : {
+        "revision" : "4f3ca2bc0cff1ef2511555eb6114f9eb12e50412",
+        "version" : "0.1.1-b20230423-090254"
+      }
+    },
+    {
+      "identity" : "pythonkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pvieito/PythonKit.git",
+      "state" : {
+        "revision" : "6fee7617cfa910fbac7035276e295ba967adbbb4",
+        "version" : "0.5.1"
+      }
+    },
+    {
+      "identity" : "youtubedl-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kewlbear/YoutubeDL-iOS.git",
+      "state" : {
+        "revision" : "64d9072cc33d2698b555d68cecf3d71f2f49b8dd",
+        "version" : "0.0.9"
       }
     }
   ],

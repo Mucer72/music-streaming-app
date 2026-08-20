@@ -6,36 +6,27 @@
 //  - macOS:  Truy cập qua nút "Spotify Import" trong IngestionView
 //  - iOS:    Màn hình riêng, truy cập qua AppRoute.spotifyImport
 //
-//  Layout:
-//    ┌─────────────────────────────────────────────────────────┐
-//    │ URL Input Bar                                           │
-//    ├─────────────────────────────────────────────────────────┤
-//    │ Left: Metadata + Match Preview      Right: Import Log   │
-//    ├─────────────────────────────────────────────────────────┤
-//    │ Upload Config (Genre + Public toggle)                   │
-//    ├─────────────────────────────────────────────────────────┤
-//    │ Action Buttons                                          │
-//    └─────────────────────────────────────────────────────────┘
-//
 
 import SwiftUI
 
 struct SpotifyImportView: View {
+    @Environment(\.dismiss) var dismiss
     @EnvironmentObject var viewModel: SpotifyImportViewModel
     @EnvironmentObject var authViewModel: AuthViewModel
     @State private var showLog: Bool = false
     @State private var visibleCandidatesCount: Int = 5
 
-    private var canFetch: Bool {
-        !viewModel.spotifyURLText.trimmingCharacters(in: .whitespaces).isEmpty &&
-        viewModel.importState == .idle ||
-        viewModel.importState == .failed("") // sẽ check actual bên dưới
-    }
-
     private var isFetching: Bool {
         viewModel.importState == .fetchingMetadata ||
         viewModel.importState == .searching ||
         viewModel.importState == .scoring
+    }
+
+    private var isBusy: Bool {
+        isFetching ||
+        viewModel.importState == .downloading ||
+        viewModel.importState == .tagging ||
+        viewModel.importState == .uploading
     }
 
     private var isConfirmDisabled: Bool {
@@ -53,17 +44,15 @@ struct SpotifyImportView: View {
                 // ── URL Input ───────────────────────────────────────────
                 urlInputSection
 
-                // ── Progress Bar ─────────────────────────────────────────
-                if viewModel.importState != .idle {
-                    progressSection
-                }
-
                 // ── Main Content ─────────────────────────────────────────
                 #if os(macOS)
                 HStack(alignment: .top, spacing: 20) {
                     VStack(spacing: 16) {
                         if let metadata = viewModel.fetchedMetadata {
                             metadataPreviewCard(metadata: metadata)
+                        }
+                        if !viewModel.searchResults.isEmpty {
+                            iTunesSearchResultsList
                         }
                         if !viewModel.candidates.isEmpty {
                             candidateSelectionList
@@ -77,7 +66,7 @@ struct SpotifyImportView: View {
 
                     if showLog {
                         ImportConsoleView()
-                            .frame(width: 320)
+                            .frame(width: 340)
                             .transition(.move(edge: .trailing).combined(with: .opacity))
                     }
                 }
@@ -88,6 +77,9 @@ struct SpotifyImportView: View {
                     if let metadata = viewModel.fetchedMetadata {
                         metadataPreviewCard(metadata: metadata)
                     }
+                    if !viewModel.searchResults.isEmpty {
+                        iTunesSearchResultsList
+                    }
                     if !viewModel.candidates.isEmpty {
                         candidateSelectionList
                     }
@@ -97,7 +89,7 @@ struct SpotifyImportView: View {
                     actionButtons
                     if showLog {
                         ImportConsoleView()
-                            .frame(minHeight: 200)
+                            .frame(minHeight: 220)
                             .transition(.move(edge: .bottom).combined(with: .opacity))
                     }
                 }
@@ -115,7 +107,7 @@ struct SpotifyImportView: View {
                 } label: {
                     Label(showLog ? "Hide Log" : "Show Log", systemImage: "terminal")
                 }
-                .help("Toggle import log console")
+                .help("Bật/tắt console log chi tiết")
             }
         }
         #endif
@@ -140,7 +132,7 @@ struct SpotifyImportView: View {
                 }
                 #endif
             }
-            Text("Dán link Spotify, ứng dụng sẽ tự tìm và tải bài hát rồi đẩy lên Drive.")
+            Text("Dán link bài hát Spotify (hoặc YouTube), hệ thống sẽ tìm kiếm bản chuẩn chất lượng cao và tự động tải lên Google Drive.")
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -150,19 +142,17 @@ struct SpotifyImportView: View {
     private var urlInputSection: some View {
         HStack(spacing: 12) {
             HStack {
-                Image(systemName: "link")
+                Image(systemName: "magnifyingglass")
                     .foregroundColor(.secondary)
                     .padding(.leading, 10)
-                TextField("https://open.spotify.com/track/...", text: $viewModel.spotifyURLText)
+                TextField("you're looking for...", text: $viewModel.spotifyURLText)
                     .textFieldStyle(.plain)
                     .autocorrectionDisabled()
                 #if os(iOS)
-                    .keyboardType(.URL)
                     .textInputAutocapitalization(.never)
                 #endif
                 if !viewModel.spotifyURLText.isEmpty {
                     Button {
-                        viewModel.spotifyURLText = ""
                         viewModel.reset()
                     } label: {
                         Image(systemName: "xmark.circle.fill")
@@ -194,8 +184,7 @@ struct SpotifyImportView: View {
             }
             .buttonStyle(.borderedProminent)
             .tint(.green)
-            .disabled(isFetching || viewModel.importState == .downloading ||
-                      viewModel.importState == .uploading)
+            .disabled(isBusy || viewModel.spotifyURLText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
         }
     }
 
@@ -239,7 +228,7 @@ struct SpotifyImportView: View {
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                     .lineLimit(1)
-                if !metadata.album.isEmpty && metadata.album != "Spotify" {
+                if !metadata.album.isEmpty && metadata.album != "Spotify" && metadata.album != metadata.title {
                     Text(metadata.album)
                         .font(.caption)
                         .foregroundColor(.secondary.opacity(0.6))
@@ -253,10 +242,74 @@ struct SpotifyImportView: View {
         .cornerRadius(14)
         .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.green.opacity(0.3), lineWidth: 1))
     }
+    
+    private var iTunesSearchResultsList: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Label("Kết quả tìm kiếm (Apple Music/iTunes)", systemImage: "magnifyingglass")
+                .font(.caption)
+                .foregroundColor(.blue)
+            
+            ForEach(viewModel.searchResults) { track in
+                Button(action: {
+                    viewModel.selectSearchResult(track)
+                }) {
+                    HStack(spacing: 12) {
+                        if let url = track.coverURL {
+                            AsyncImage(url: url) { phase in
+                                switch phase {
+                                case .empty:
+                                    Color.gray.opacity(0.3)
+                                        .frame(width: 40, height: 40)
+                                        .cornerRadius(6)
+                                case .success(let image):
+                                    image.resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 40, height: 40)
+                                        .cornerRadius(6)
+                                case .failure:
+                                    Color.gray.opacity(0.3)
+                                        .frame(width: 40, height: 40)
+                                        .cornerRadius(6)
+                                @unknown default:
+                                    EmptyView()
+                                }
+                            }
+                        } else {
+                            Color.gray.opacity(0.3)
+                                .frame(width: 40, height: 40)
+                                .cornerRadius(6)
+                        }
+                        
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(track.trackName)
+                                .font(.subheadline).bold()
+                                .lineLimit(1)
+                            Text(track.artistName)
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                                .lineLimit(1)
+                        }
+                        Spacer()
+                        Text(track.durationFormatted)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(8)
+                    .background(Color.blue.opacity(0.05))
+                    .cornerRadius(8)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(14)
+        .background(.ultraThinMaterial)
+        .cornerRadius(14)
+        .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.blue.opacity(0.3), lineWidth: 1))
+    }
 
     private var candidateSelectionList: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Label("Kết quả tìm kiếm", systemImage: "list.dash")
+            Label("Ứng viên âm thanh tương đương", systemImage: "list.dash")
                 .font(.caption)
                 .foregroundColor(.orange)
             
@@ -293,7 +346,7 @@ struct SpotifyImportView: View {
                     
                     Spacer()
                     
-                    // Recommended badge cho bài chuẩn nhất
+                    // Recommended badge cho bài khớp nhất
                     if viewModel.candidates.first?.id == candidate.id {
                         Text("Khớp nhất")
                             .font(.system(size: 10, weight: .bold))
@@ -341,12 +394,19 @@ struct SpotifyImportView: View {
                     .foregroundColor(.secondary)
                 Spacer()
                 Picker("", selection: $viewModel.selectedGenreId) {
-                    Text("Chưa chọn").tag("")
+                    Text("Chọn thể loại").tag("")
                     ForEach(viewModel.availableGenres) { genre in
                         Text(genre.name).tag(genre.id ?? "")
                     }
                 }
                 .frame(maxWidth: 180)
+            }
+
+            if viewModel.selectedGenreId.isEmpty {
+                Text("⚠️ Vui lòng chọn thể loại để tiếp tục")
+                    .font(.caption2)
+                    .foregroundColor(.orange)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
             }
 
             // Public toggle
@@ -373,7 +433,12 @@ struct SpotifyImportView: View {
     private var actionButtons: some View {
         HStack(spacing: 12) {
             // Confirm & Upload
-            Button(action: { viewModel.confirmAndUpload() }) {
+            Button(action: { 
+                viewModel.confirmAndUpload()
+                #if os(iOS)
+                dismiss() // Đóng sheet để ra ngoài quan sát tiến trình
+                #endif
+            }) {
                 HStack(spacing: 8) {
                     if viewModel.importState == .downloading ||
                        viewModel.importState == .tagging ||
@@ -431,12 +496,12 @@ struct SpotifyImportView: View {
         switch viewModel.importState {
         case .idle: return ""
         case .fetchingMetadata: return "Đang lấy metadata Spotify..."
-        case .searching: return "Đang tìm kiếm audio..."
-        case .scoring: return "Đang tính điểm tương đồng..."
+        case .searching: return "Đang tìm kiếm audio tương ứng..."
+        case .scoring: return "Đang phân tích độ khớp âm thanh..."
         case .readyToUpload: return "Sẵn sàng — kiểm tra thông tin và ấn Import"
         case .downloading: return "Đang tải audio..."
-        case .tagging: return "Đang gắn metadata..."
-        case .uploading: return "Đang upload lên Drive..."
+        case .tagging: return "Đang gắn thẻ metadata..."
+        case .uploading: return "Đang upload lên Google Drive..."
         case .completed: return "Hoàn tất!"
         case .failed(let msg): return "Lỗi: \(msg)"
         }
@@ -450,12 +515,6 @@ struct SpotifyImportView: View {
         case .completed: return "Hoàn tất!"
         default: return "Import & Upload lên Drive"
         }
-    }
-
-    private func scoreBadgeColor(_ score: Double) -> Color {
-        if score >= 0.8 { return .green }
-        if score >= 0.7 { return .orange }
-        return .red
     }
 
     private func formatDuration(_ seconds: Int) -> String {
@@ -485,7 +544,6 @@ struct SpotifyImportView: View {
         }
     }
 
-    // Cross-platform image từ Data
     private func platformImage(from data: Data) -> Image? {
         #if os(macOS)
         if let nsImage = NSImage(data: data) {

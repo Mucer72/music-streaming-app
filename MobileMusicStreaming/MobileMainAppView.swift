@@ -12,6 +12,7 @@ struct MobileMainAppView: View {
     
     @StateObject private var playerViewModel = PlayerViewModel()
     @StateObject private var playlistManager = PlaylistManagerViewModel()
+    @StateObject private var spotifyImportViewModel = SpotifyImportViewModel()
     
     @State private var selectedTab = 0
     @State private var selectedPlaylist: PlaylistRecord?
@@ -19,6 +20,7 @@ struct MobileMainAppView: View {
     @State private var selectedGenre: GenreRecord?
     @State private var trackToAddToPlaylist: TrackRecord?
     @State private var selectedTrackDetail: TrackRecord?
+    @State private var isShowingSpotifyImport = false
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -54,6 +56,21 @@ struct MobileMainAppView: View {
                         )
                     }
                     .navigationTitle("Thư viện")
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button {
+                                isShowingSpotifyImport = true
+                            } label: {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "plus.circle.fill")
+                                    Text("Tải nhạc")
+                                }
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.green)
+                            }
+                        }
+                    }
                     .background(Color(.systemBackground))
                 }
                 .tabItem {
@@ -138,6 +155,16 @@ struct MobileMainAppView: View {
                     .padding(.horizontal)
                     .padding(.bottom, 56) // Hover cleanly above native TabBar
                     .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+            
+            // Global Background Download Indicator
+            VStack {
+                HStack {
+                    BackgroundDownloadIndicator()
+                        .environmentObject(spotifyImportViewModel)
+                    Spacer()
+                }
+                Spacer()
             }
         }
         .animation(.spring(), value: playerViewModel.playingTrack?.id)
@@ -232,6 +259,21 @@ struct MobileMainAppView: View {
             MobilePlayerSheetView()
                 .environmentObject(playerViewModel)
         }
+        .sheet(isPresented: $isShowingSpotifyImport) {
+            NavigationStack {
+                SpotifyImportView()
+                    .environmentObject(spotifyImportViewModel)
+                    .environmentObject(authViewModel)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button("Đóng") {
+                                isShowingSpotifyImport = false
+                            }
+                            .fontWeight(.semibold)
+                        }
+                    }
+            }
+        }
     }
 }
 
@@ -299,7 +341,7 @@ struct MobilePlaylistsTab: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     // Virtual "Liked Tracks" Playlist Row
-                    PlaylistRowView(
+                    MobilePlaylistCardRow(
                         title: "Bài hát đã thích",
                         description: "\(viewModel.likedTracks.count) bài hát",
                         systemImage: "heart.fill",
@@ -315,7 +357,7 @@ struct MobilePlaylistsTab: View {
                     
                     // User Custom Playlists
                     ForEach(playlistManager.userPlaylists) { playlist in
-                        PlaylistRowView(
+                        MobilePlaylistCardRow(
                             title: playlist.title,
                             description: "\(playlist.trackIds.count) bài hát",
                             systemImage: "music.note.list",
@@ -334,7 +376,7 @@ struct MobilePlaylistsTab: View {
     }
 }
 
-struct PlaylistRowView: View {
+struct MobilePlaylistCardRow: View {
     let title: String
     let description: String
     let systemImage: String

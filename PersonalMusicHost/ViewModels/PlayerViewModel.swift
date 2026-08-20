@@ -106,6 +106,22 @@ class PlayerViewModel: ObservableObject {
             }
             .store(in: &cancellables)
 
+        // 🔥 KÍCH HOẠT TẢI GỐI ĐẦU NGAY KHI BÀI HIỆN TẠI VỪA LOAD XONG (READY TO PLAY)
+        NotificationCenter.default.publisher(for: NSNotification.Name("CurrentTrackReadyToPlay"))
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.preloadNextTrack()
+            }
+            .store(in: &cancellables)
+
+        // 🔥 TỰ PHỤC HỒI / CHUYỂN BÀI KHI PHÁT HIỆN LỖI STREAM
+        NotificationCenter.default.publisher(for: NSNotification.Name("TrackPlaybackFailed"))
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.handleTrackPlaybackFailed()
+            }
+            .store(in: &cancellables)
+
         // Bắc cầu cập nhật UI từ Engine
         playerEngine.objectWillChange.sink { [weak self] _ in
             self?.objectWillChange.send()
@@ -360,9 +376,7 @@ class PlayerViewModel: ObservableObject {
                 let token = isOwner ? try await driveService.getValidAccessToken() : nil
                 
                 playerEngine.startStream(fileID: fileID, accessToken: token, useWebURL: useWebURL)
-
-                // 🔥 Nạp đạn cho bài tiếp theo ngay sau khi Play bài hiện tại
-                preloadNextTrack()
+                // preloadNextTrack() sẽ tự động kích hoạt qua notification "CurrentTrackReadyToPlay" ngay khi bài này load xong
             } catch {
                 print("❌ Lỗi Token: \(error.localizedDescription)")
                 self.playerEngine.isBuffering = false
@@ -405,12 +419,14 @@ class PlayerViewModel: ObservableObject {
         }
 
         let nextTrack = playlist[nextIndex]
-        self.queuedTrack = nextTrack
 
         guard
             let fileID = nextTrack.googleDriveAACID
                 ?? nextTrack.googleDriveALACID, !fileID.isEmpty
-        else { return }
+        else {
+            self.queuedTrack = nil
+            return
+        }
 
         Task {
             do {
@@ -418,9 +434,19 @@ class PlayerViewModel: ObservableObject {
                 let useWebURL = !isOwner
                 let token = isOwner ? try await driveService.getValidAccessToken() : nil
                 
-                playerEngine.queueNext(fileID: fileID, accessToken: token, useWebURL: useWebURL)
+                let success = playerEngine.queueNext(fileID: fileID, accessToken: token, useWebURL: useWebURL)
+                DispatchQueue.main.async {
+                    if success {
+                        self.queuedTrack = nextTrack
+                    } else {
+                        self.queuedTrack = nil
+                    }
+                }
             } catch {
                 print("❌ Lỗi Token Preload: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    self.queuedTrack = nil
+                }
             }
         }
     }
@@ -434,22 +460,71 @@ class PlayerViewModel: ObservableObject {
     }
 
     private func handleNextTrackNotification() {
-        if let nextTrack = queuedTrack {
+        if let nextTrack = queuedTrack, playerEngine.hasQueuedItem {
+            // Trường hợp 1: AVQueuePlayer đã có sẵn bài gối đầu chạy tiếp mượt mà
             self.playingTrack = nextTrack
             self.focusedTrack = nextTrack
             self.streamCountIncrementedForCurrentTrack = false
+            self.queuedTrack = nil
             playerEngine.resetForNewTrack()
-            preloadNextTrack()
+            playerEngine.play()
         } else {
-            // Hết nhạc -> Ngừng
-            playerEngine.pause()
-            playerEngine.resetForNewTrack()
+            // Trường hợp 2: Không có bài tải gối đầu sẵn (do preload lỗi, hết hạn token hoặc hết danh sách)
+            self.queuedTrack = nil
+            guard let current = playingTrack ?? focusedTrack,
+                  let currentIndex = playlist.firstIndex(where: { $0.id == current.id }) else {
+                playerEngine.pause()
+                playerEngine.resetForNewTrack()
+                return
+            }
+
+            var nextIndex = currentIndex + 1
+            switch playbackMode {
+            case .queue:
+                if nextIndex >= playlist.count {
+                    playerEngine.pause()
+                    playerEngine.resetForNewTrack()
+                    return
+                }
+            case .loopAll:
+                if playlist.isEmpty { return }
+                if nextIndex >= playlist.count { nextIndex = 0 }
+            case .loopOne:
+                nextIndex = currentIndex
+            case .random:
+                if playlist.isEmpty { return }
+                if playlist.count == 1 {
+                    nextIndex = currentIndex
+                } else {
+                    var randomIdx = Int.random(in: 0..<playlist.count)
+                    while randomIdx == currentIndex {
+                        randomIdx = Int.random(in: 0..<playlist.count)
+                    }
+                    nextIndex = randomIdx
+                }
+            }
+
+            let next = playlist[nextIndex]
+            print("🔄 [PlayerViewModel] Tự động khởi tạo phát bài kế tiếp '\(next.title)' với Token mới...")
+            playTrack(next)
+        }
+    }
+
+    private func handleTrackPlaybackFailed() {
+        guard let current = playingTrack else { return }
+        print("⚠️ [PlayerViewModel] Phát hiện lỗi phát bài '\(current.title)'. Tự động chuyển bài tiếp theo để tránh kẹt...")
+        
+        Task {
+            try? await Task.sleep(nanoseconds: 1_000_000_000)
+            DispatchQueue.main.async {
+                self.nextTrack()
+            }
         }
     }
 
     // Khi người dùng cưỡng ép chuyển bài bằng tay (qua UI nút Next/Prev)
     func nextTrack() {
-        guard let current = focusedTrack,
+        guard let current = focusedTrack ?? playingTrack,
             let currentIndex = playlist.firstIndex(where: {
                 $0.id == current.id
             })
@@ -476,12 +551,13 @@ class PlayerViewModel: ObservableObject {
             }
         }
         
-        focusedTrack = playlist[nextIndex]
-        if playerEngine.isPlaying { playTrack(playlist[nextIndex]) }
+        let next = playlist[nextIndex]
+        focusedTrack = next
+        playTrack(next)
     }
 
     func prevTrack() {
-        guard let current = focusedTrack,
+        guard let current = focusedTrack ?? playingTrack,
             let currentIndex = playlist.firstIndex(where: {
                 $0.id == current.id
             })
@@ -508,8 +584,9 @@ class PlayerViewModel: ObservableObject {
             }
         }
         
-        focusedTrack = playlist[prevIndex]
-        if playerEngine.isPlaying { playTrack(playlist[prevIndex]) }
+        let prev = playlist[prevIndex]
+        focusedTrack = prev
+        playTrack(prev)
     }
     
     func collapsePlayer() {

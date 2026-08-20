@@ -3,8 +3,7 @@
 //  PersonalMusicHost
 //
 //  User profile screen. Displays avatar, stats (Tracks/Albums/Respect),
-//  and a sign-out button for the current user.
-//  Can also display another user's profile when a UID is provided.
+//  cloud management actions, and sign-out button.
 //
 
 import SwiftUI
@@ -12,11 +11,18 @@ import FirebaseCore
 
 struct ProfileView: View {
     @StateObject private var viewModel: ProfileViewModel
+    @StateObject private var databaseViewModel = DatabaseViewModel()
     @EnvironmentObject var authViewModel: AuthViewModel
     @AppStorage("appLanguage") private var appLanguage: String = "en"
 
+    @State private var isShowingDatabaseManager = false
+
     init(uid: String? = nil) {
         _viewModel = StateObject(wrappedValue: ProfileViewModel(targetUID: uid))
+    }
+
+    private var isOwnProfile: Bool {
+        viewModel.targetUID == nil || viewModel.targetUID == FirebaseAuthService.shared.currentUID
     }
 
     var body: some View {
@@ -54,20 +60,66 @@ struct ProfileView: View {
                 }
                 .padding(.top, 40)
 
-                // MARK: - Stats
-                HStack(spacing: 30) {
-                    StatCard(title: "Tracks", count: viewModel.totalTracks, icon: "music.note")
-                    StatCard(title: "Albums", count: viewModel.totalAlbums, icon: "square.stack")
-                    StatCard(title: "Respect", count: viewModel.userRecord?.respectCount ?? 0, icon: "heart.fill")
+                // MARK: - Stats (Interactive for own profile)
+                HStack(spacing: 20) {
+                    StatCard(
+                        title: "Tracks",
+                        count: viewModel.totalTracks,
+                        icon: "music.note",
+                        action: isOwnProfile ? {
+                            databaseViewModel.managementMode = .track
+                            isShowingDatabaseManager = true
+                        } : nil
+                    )
+                    
+                    StatCard(
+                        title: "Albums",
+                        count: viewModel.totalAlbums,
+                        icon: "square.stack",
+                        action: isOwnProfile ? {
+                            databaseViewModel.managementMode = .album
+                            isShowingDatabaseManager = true
+                        } : nil
+                    )
+                    
+                    StatCard(
+                        title: "Respect",
+                        count: viewModel.userRecord?.respectCount ?? 0,
+                        icon: "heart.fill"
+                    )
                 }
                 .padding(.horizontal)
 
-                Spacer(minLength: 40)
+                Spacer(minLength: 20)
 
                 // MARK: - Actions (own profile only)
-                if viewModel.targetUID == nil
-                    || viewModel.targetUID == FirebaseAuthService.shared.currentUID {
-                    VStack(spacing: 16) {
+                if isOwnProfile {
+                    VStack(spacing: 14) {
+                        // Quick Button to open Database Management
+                        Button(action: {
+                            isShowingDatabaseManager = true
+                        }) {
+                            HStack {
+                                Image(systemName: "slider.horizontal.3")
+                                    .font(.headline)
+                                    .foregroundColor(.blue)
+                                Text("Quản lý dữ liệu & Bài hát")
+                                    .fontWeight(.semibold)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.footnote)
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding()
+                            #if os(macOS)
+                            .background(Color.secondary.opacity(0.12))
+                            #else
+                            .background(Color(.secondarySystemBackground))
+                            #endif
+                            .cornerRadius(12)
+                        }
+                        .buttonStyle(.plain)
+
                         #if os(macOS)
                         HStack {
                             Text("Language")
@@ -98,12 +150,29 @@ struct ProfileView: View {
                         }
                         .buttonStyle(.plain)
                     }
-                    .padding(.horizontal, 40)
+                    .padding(.horizontal, 30)
                     .padding(.bottom, 40)
                 }
             }
         }
         .navigationTitle("Profile")
         .task { await viewModel.loadUserProfile() }
+        .sheet(isPresented: $isShowingDatabaseManager) {
+            NavigationStack {
+                DatabaseManagementView()
+                    .environmentObject(databaseViewModel)
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button("Đóng") {
+                                isShowingDatabaseManager = false
+                            }
+                            .fontWeight(.semibold)
+                        }
+                    }
+            }
+            #if os(macOS)
+            .frame(minWidth: 700, minHeight: 550)
+            #endif
+        }
     }
 }

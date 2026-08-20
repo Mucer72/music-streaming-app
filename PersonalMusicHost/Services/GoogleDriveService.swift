@@ -267,12 +267,7 @@ class GoogleDriveService: ObservableObject {
         }
     }
     
-    func uploadImageFile(fileURL: URL, folderID: String) async throws -> String {
-        // 1. Xác định MIME Type chuẩn xác cho ảnh để Google Drive không từ chối
-        let fileExtension = fileURL.pathExtension.lowercased()
-        let mimeType = (fileExtension == "png") ? "image/png" : "image/jpeg"
-        
-        // 2. Cấu hình URL endpoint của Google Drive API v3 (Multipart Upload)
+    func uploadImageData(imageData: Data, fileName: String = "cover_\(UUID().uuidString).jpg", mimeType: String = "image/jpeg", folderID: String) async throws -> String {
         guard let url = URL(string: "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart") else { throw URLError(.badURL) }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -283,31 +278,25 @@ class GoogleDriveService: ObservableObject {
         let boundary = "Boundary-\(UUID().uuidString)"
         request.setValue("multipart/related; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
         
-        // 3. Tạo cấu trúc Body Multipart gộp cả Metadata và dữ liệu Byte của ảnh
         var body = Data()
-        
-        // Phần 1: Metadata đặt tên file và chỉ định thư mục cha (covers folder)
         body.append(Data("--\(boundary)\r\n".utf8))
         body.append(Data("Content-Type: application/json; charset=UTF-8\r\n\r\n".utf8))
         let metadata: [String: Any] = [
-            "name": fileURL.lastPathComponent,
+            "name": fileName,
             "parents": [folderID]
         ]
         let metadataData = try JSONSerialization.data(withJSONObject: metadata, options: [])
         body.append(metadataData)
         body.append(Data("\r\n".utf8))
         
-        // Phần 2: Nội dung Byte thực tế của file ảnh
         body.append(Data("--\(boundary)\r\n".utf8))
         body.append(Data("Content-Type: \(mimeType)\r\n\r\n".utf8))
-        let fileData = try Data(contentsOf: fileURL)
-        body.append(fileData)
+        body.append(imageData)
         body.append(Data("\r\n".utf8))
         body.append(Data("--\(boundary)--\r\n".utf8))
         
         request.httpBody = body
         
-        // 4. Thực thi Request và bóc tách lấy ID file từ Google phản hồi
         let (data, response) = try await URLSession.shared.data(for: request)
         guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
             let errorLog = String(data: data, encoding: .utf8) ?? "Lỗi không xác định"
@@ -320,6 +309,18 @@ class GoogleDriveService: ObservableObject {
         }
         
         throw NSError(domain: "GoogleDriveService", code: 500, userInfo: [NSLocalizedDescriptionKey: "Cannot parse response ID from Google"])
+    }
+    
+    func uploadImageFile(fileURL: URL, folderID: String) async throws -> String {
+        let fileExtension = fileURL.pathExtension.lowercased()
+        let mimeType = (fileExtension == "png") ? "image/png" : "image/jpeg"
+        let fileData = try Data(contentsOf: fileURL)
+        return try await uploadImageData(
+            imageData: fileData,
+            fileName: fileURL.lastPathComponent,
+            mimeType: mimeType,
+            folderID: folderID
+        )
     }
     
     // Hàm xoá file trên Google Drive dựa vào fileID

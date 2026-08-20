@@ -48,6 +48,7 @@
       }
     },
     "%@ • Released: %lld" : {
+      "extractionState" : "stale",
       "localizations" : {
         "vi" : {
           "stringUnit" : {
@@ -58,6 +59,9 @@
       }
     },
     "%lld" : {
+
+    },
+    "%lld bài" : {
 
     },
     "%lld tracks" : {
@@ -101,6 +105,9 @@
     "•" : {
 
     },
+    "⚠️ Vui lòng chọn thể loại để tiếp tục" : {
+
+    },
     "🎭 Genres" : {
       "localizations" : {
         "vi" : {
@@ -132,6 +139,7 @@
       }
     },
     "🔍 Search by track name..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "vi" : {
           "stringUnit" : {
@@ -140,6 +148,9 @@
           }
         }
       }
+    },
+    "🔍 Tìm kiếm bài hát..." : {
+
     },
     "🔥 Top 10 Most Played" : {
       "localizations" : {
@@ -257,6 +268,7 @@
       }
     },
     "Album Information" : {
+      "extractionState" : "stale",
       "localizations" : {
         "vi" : {
           "stringUnit" : {
@@ -295,6 +307,15 @@
           }
         }
       }
+    },
+    "Ảnh bìa Album" : {
+
+    },
+    "Ảnh bìa bài hát" : {
+
+    },
+    "Ảnh bìa Playlist" : {
+
     },
     "Anonymous User" : {
       "extractionState" : "stale",
@@ -337,10 +358,17 @@
         }
       }
     },
+    "Bài hát" : {
+
+    },
     "Bài hát, nghệ sĩ, album..." : {
 
     },
+    "Bật/tắt console log chi tiết" : {
+
+    },
     "By Album" : {
+      "extractionState" : "stale",
       "localizations" : {
         "vi" : {
           "stringUnit" : {
@@ -351,6 +379,7 @@
       }
     },
     "By Artist" : {
+      "extractionState" : "stale",
       "localizations" : {
         "vi" : {
           "stringUnit" : {
@@ -361,6 +390,7 @@
       }
     },
     "By Title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "vi" : {
           "stringUnit" : {
@@ -387,6 +417,7 @@
       }
     },
     "Change Cover Art" : {
+      "extractionState" : "stale",
       "localizations" : {
         "vi" : {
           "stringUnit" : {
@@ -396,7 +427,37 @@
         }
       }
     },
-    "Chưa chọn" : {
+    "Chế độ" : {
+
+    },
+    "Chỉnh sửa" : {
+
+    },
+    "Chỉnh sửa Album" : {
+
+    },
+    "Chỉnh sửa bài hát" : {
+
+    },
+    "Chỉnh sửa Playlist" : {
+
+    },
+    "Cho phép mọi người tìm kiếm và nghe playlist này" : {
+
+    },
+    "Cho phép mọi người xem và nghe các bài hát trong album này" : {
+
+    },
+    "Cho phép người dùng khác xem và nghe bài hát này" : {
+
+    },
+    "Chọn ảnh" : {
+
+    },
+    "Chọn thể loại" : {
+
+    },
+    "Chưa phân loại" : {
 
     },
     "Close" : {
@@ -420,6 +481,7 @@
       }
     },
     "CLOUD DATA MANAGEMENT" : {
+      "extractionState" : "stale",
       "localizations" : {
         "vi" : {
           "stringUnit" : {
@@ -428,6 +490,12 @@
           }
         }
       }
+    },
+    "Công khai" : {
+
+    },
+    "Công khai (Public)" : {
+
     },
     "Công khai trên thư viện:" : {
 
@@ -453,6 +521,7 @@
       }
     },
     "Cover Art" : {
+      "extractionState" : "stale",
       "localizations" : {
         "vi" : {
           "stringUnit" : {
@@ -512,10 +581,13 @@
         }
       }
     },
-    "Dán link Spotify, ứng dụng sẽ tự tìm và tải bài hát rồi đẩy lên Drive." : {
+    "Dán link bài hát Spotify (hoặc YouTube), hệ thống sẽ tìm kiếm bản chuẩn chất lượng cao và tự động tải lên Google Drive." : {
 
     },
     "Đang kiểm tra bảo mật..." : {
+
+    },
+    "Đang tải thêm..." : {
 
     },
     "Đang tìm..." : {
@@ -535,6 +607,7 @@
       }
     },
     "Delete %lld albums" : {
+      "extractionState" : "stale",
       "localizations" : {
         "vi" : {
           "stringUnit" : {
@@ -545,6 +618,7 @@
       }
     },
     "Delete %lld playlists" : {
+      "extractionState" : "stale",
       "localizations" : {
         "vi" : {
           "stringUnit" : {
@@ -555,6 +629,7 @@
       }
     },
     "Delete %lld tracks" : {
+      "extractionState" : "stale",
       "localizations" : {
         "vi" : {
           "stringUnit" : {
@@ -573,6 +648,9 @@
           }
         }
       }
+    },
+    "Đóng" : {
+
     },
     "Edit Album" : {
       "localizations" : {
@@ -661,6 +739,7 @@
       }
     },
     "Genre:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "vi" : {
           "stringUnit" : {
@@ -683,7 +762,7 @@
     "Hide Log" : {
 
     },
-    "https://open.spotify.com/track/..." : {
+    "Hủy" : {
 
     },
     "Import Log" : {
@@ -712,10 +791,13 @@
         }
       }
     },
-    "Kết quả tìm kiếm" : {
+    "Kết quả tìm kiếm (Apple Music/iTunes)" : {
 
     },
     "Khớp nhất" : {
+
+    },
+    "Làm mới" : {
 
     },
     "Language" : {
@@ -732,6 +814,7 @@
       }
     },
     "Loading more data..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "vi" : {
           "stringUnit" : {
@@ -771,6 +854,24 @@
         }
       }
     },
+    "Lưu" : {
+
+    },
+    "Mô tả / Ghi chú (Tùy chọn)" : {
+
+    },
+    "Mô tả Album (Tùy chọn)" : {
+
+    },
+    "Mô tả bài hát" : {
+
+    },
+    "Mô tả Playlist (Tùy chọn)" : {
+
+    },
+    "Mô tả tóm tắt" : {
+
+    },
     "Music Library" : {
       "localizations" : {
         "vi" : {
@@ -782,6 +883,12 @@
       }
     },
     "Năm" : {
+
+    },
+    "Năm phát hành" : {
+
+    },
+    "Nghệ sĩ" : {
 
     },
     "No data available for this genre." : {
@@ -862,6 +969,7 @@
 
     },
     "Playlist Description (Optional)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "vi" : {
           "stringUnit" : {
@@ -872,6 +980,7 @@
       }
     },
     "Playlist Information" : {
+      "extractionState" : "stale",
       "localizations" : {
         "vi" : {
           "stringUnit" : {
@@ -892,6 +1001,7 @@
       }
     },
     "Playlists" : {
+      "extractionState" : "stale",
       "localizations" : {
         "vi" : {
           "stringUnit" : {
@@ -951,6 +1061,15 @@
         }
       }
     },
+    "Quản lý dữ liệu & Bài hát" : {
+
+    },
+    "QUẢN LÝ DỮ LIỆU CLOUD" : {
+
+    },
+    "Quản lý Thư viện" : {
+
+    },
     "Queue" : {
       "localizations" : {
         "vi" : {
@@ -972,6 +1091,7 @@
       }
     },
     "Refresh" : {
+      "extractionState" : "stale",
       "localizations" : {
         "vi" : {
           "stringUnit" : {
@@ -992,6 +1112,7 @@
       }
     },
     "Release Year:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "vi" : {
           "stringUnit" : {
@@ -1034,7 +1155,14 @@
     "Respect" : {
 
     },
+    "Riêng tư" : {
+
+    },
+    "Sắp xếp" : {
+
+    },
     "Save Changes" : {
+      "extractionState" : "stale",
       "localizations" : {
         "vi" : {
           "stringUnit" : {
@@ -1169,7 +1297,7 @@
         }
       }
     },
-    "Số" : {
+    "Số thứ tự (#)" : {
 
     },
     "Song Name" : {
@@ -1183,6 +1311,7 @@
       }
     },
     "Sort:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "vi" : {
           "stringUnit" : {
@@ -1228,6 +1357,9 @@
         }
       }
     },
+    "Sửa" : {
+
+    },
     "Syncing..." : {
       "localizations" : {
         "vi" : {
@@ -1241,7 +1373,40 @@
     "System Logs" : {
 
     },
+    "Tải nhạc" : {
+
+    },
+    "Tập tin..." : {
+
+    },
+    "Tên Album" : {
+
+    },
+    "Tên album (nếu có)" : {
+
+    },
+    "Tên bài hát" : {
+
+    },
+    "Tên nghệ sĩ" : {
+
+    },
+    "Tên Playlist" : {
+
+    },
+    "Thể loại" : {
+
+    },
     "Thể loại:" : {
+
+    },
+    "Theo Album" : {
+
+    },
+    "Theo Nghệ sĩ" : {
+
+    },
+    "Theo Tên bài hát" : {
 
     },
     "This album has no tracks yet." : {
@@ -1270,10 +1435,22 @@
     "Tiếng Việt" : {
 
     },
+    "Tiêu đề album" : {
+
+    },
+    "Tiêu đề bài hát" : {
+
+    },
+    "Tiêu đề danh sách phát" : {
+
+    },
     "Tìm kiếm" : {
 
     },
     "Tìm kiếm bài hát, nghệ sĩ hoặc album..." : {
+
+    },
+    "Tìm kiếm theo tên..." : {
 
     },
     "Toggle Console" : {
@@ -1286,10 +1463,11 @@
         }
       }
     },
-    "Toggle import log console" : {
+    "Track #" : {
 
     },
     "Track #:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "vi" : {
           "stringUnit" : {
@@ -1300,6 +1478,7 @@
       }
     },
     "Track Description (Optional)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "vi" : {
           "stringUnit" : {
@@ -1310,6 +1489,7 @@
       }
     },
     "Track Information" : {
+      "extractionState" : "stale",
       "localizations" : {
         "vi" : {
           "stringUnit" : {
@@ -1350,6 +1530,7 @@
       }
     },
     "Uncategorized" : {
+      "extractionState" : "stale",
       "localizations" : {
         "vi" : {
           "stringUnit" : {
@@ -1358,6 +1539,9 @@
           }
         }
       }
+    },
+    "Ứng viên âm thanh tương đương" : {
+
     },
     "UPLOAD & CONVERT TOOL" : {
       "localizations" : {
@@ -1413,6 +1597,21 @@
     "Xem thêm các kết quả khác..." : {
 
     },
+    "Xóa" : {
+
+    },
+    "Xóa %lld album" : {
+
+    },
+    "Xóa %lld bài" : {
+
+    },
+    "Xóa %lld playlist" : {
+
+    },
+    "Xóa bài hát" : {
+
+    },
     "Year" : {
       "localizations" : {
         "vi" : {
@@ -1432,6 +1631,9 @@
           }
         }
       }
+    },
+    "you're looking for..." : {
+
     },
     "YouTube" : {
 

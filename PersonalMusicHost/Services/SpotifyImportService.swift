@@ -3,15 +3,14 @@
 //  PersonalMusicHost
 //
 //  Pipeline core:
-//  1. searchCandidates    — Tìm kiếm trên các nguồn được cấu hình (Piped,…)
-//  2. scoreCandidates     — Thuật toán tính điểm trọng số để chọn ứng viên tốt nhất
-//  3. downloadAudio       — Tải file .m4a về thư mục tạm bằng URLSession
-//  4. tagAudioFile        — Nhúng metadata + ảnh bìa bằng AVFoundation (passthrough, không transcode)
+//  1. searchCandidates — Tìm kiếm ứng viên audio từ YouTube Music và YouTube thường (Fallback)
+//  2. scoreCandidates  — Thuật toán tính điểm trọng số chuẩn xác
+//  3. downloadAudio    — Tải file audio .m4a chất lượng cao qua YtDlpService
+//  4. tagAudioFile     — Nhúng metadata (Title, Artist, Album, Artwork) vào file .m4a
 //
 
 import Foundation
 import AVFoundation
-import CryptoKit
 
 // MARK: - Error Definitions
 
@@ -54,7 +53,7 @@ protocol SpotifyImportServiceProtocol {
         metadata: SpotifyTrackMetadata
     ) -> [AudioCandidate]
 
-    func downloadAudio(candidate: AudioCandidate) async throws -> URL
+    func downloadAudio(candidate: AudioCandidate, onProgress: ((Double) -> Void)?) async throws -> URL
 
     func tagAudioFile(
         at sourceURL: URL,
@@ -75,7 +74,6 @@ final class SpotifyImportService: SpotifyImportServiceProtocol {
         "playlist", "liên khúc", "lk ", "lofi", "lo-fi", "tập ", "audio lyrics video"
     ]
 
-
     // MARK: - 1. Search Candidates
 
     /// Tìm kiếm ứng viên từ YouTube Music và YouTube thường (Fallback)
@@ -87,9 +85,8 @@ final class SpotifyImportService: SpotifyImportServiceProtocol {
         var lastError: Error?
 
         // 1. Tìm kiếm trên YouTube Music trước tiên
-        var ytmCandidates: [AudioCandidate] = []
         do {
-            ytmCandidates = try await searchYouTubeMusicInnerTube(query: query)
+            let ytmCandidates = try await searchYouTubeMusicInnerTube(query: query)
             allCandidates.append(contentsOf: ytmCandidates)
         } catch {
             lastError = error
@@ -100,11 +97,10 @@ final class SpotifyImportService: SpotifyImportServiceProtocol {
         let hasGoodYTMMatch = bestScore >= 0.7
         let needsDurationFix = allCandidates.contains { $0.durationSeconds == 0 }
 
-        // 2. Fetch YouTube thường nếu: (a) Điểm YT Music quá thấp (để làm fallback cho UI) hoặc (b) Cần để sửa lỗi duration = 0
-        var ytCandidates: [AudioCandidate] = []
+        // 2. Fetch YouTube thường nếu: (a) Điểm YT Music quá thấp hoặc (b) Cần mượn thời lượng
         if !hasGoodYTMMatch || needsDurationFix {
             do {
-                ytCandidates = try await searchYouTubeInnerTube(query: query)
+                let ytCandidates = try await searchYouTubeInnerTube(query: query)
                 allCandidates.append(contentsOf: ytCandidates)
             } catch {
                 print("⚠️ Lỗi lấy YouTube thường: \(error.localizedDescription)")
@@ -132,16 +128,16 @@ final class SpotifyImportService: SpotifyImportServiceProtocol {
             }
         }
 
-        // 4. Lọc bỏ các video YouTube thường nếu YT Music đã có kết quả tốt (đã mượn YT thường để sửa duration xong)
+        // 4. Lọc bỏ các video YouTube thường nếu YT Music đã có kết quả tốt
         if hasGoodYTMMatch {
             allCandidates.removeAll { !$0.isYTMusic }
         }
 
-        // 5. Lọc bỏ hoàn toàn các video dài quá 15 phút (tuyển tập / liên khúc / 1-hour loops)
+        // 5. Lọc bỏ hoàn toàn các video dài quá 15 phút (tuyển tập / liên khúc)
         allCandidates.removeAll { $0.durationSeconds > 900 }
 
         if allCandidates.isEmpty {
-            let msg = lastError?.localizedDescription ?? "Không tìm thấy kết quả nào"
+            let msg = lastError?.localizedDescription ?? "Không tìm thấy kết quả phù hợp nào trên hệ thống."
             throw SpotifyImportError.searchFailed(msg)
         }
 
@@ -166,13 +162,13 @@ final class SpotifyImportService: SpotifyImportServiceProtocol {
 
     // MARK: - 3. Download Audio
 
-    /// Lấy direct stream URL từ Piped và tải file về thư mục tạm.
-    /// Ưu tiên stream m4a/audio-mp4 để tránh transcode sau này.
-    func downloadAudio(candidate: AudioCandidate) async throws -> URL {
+    /// Tải file audio chất lượng cao qua YtDlpService (macOS) hoặc iOSAudioExtractionService (iOS)
+    func downloadAudio(candidate: AudioCandidate, onProgress: ((Double) -> Void)? = nil) async throws -> URL {
+        let fileName = "\(candidate.videoId)_raw.m4a"
+        let destination = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
+
         #if os(macOS)
         if YtDlpService.shared.isInstalled {
-            let fileName = "\(candidate.videoId)_raw.m4a"
-            let destination = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
             do {
                 let localFile = try await YtDlpService.shared.downloadAudio(
                     videoId: candidate.videoId,
@@ -187,15 +183,28 @@ final class SpotifyImportService: SpotifyImportServiceProtocol {
         } else {
             throw SpotifyImportError.downloadFailed("yt-dlp chưa được cài đặt trên macOS.")
         }
+        #elseif os(iOS)
+        do {
+            let localFile = try await iOSAudioExtractionService.shared.extractAndDownloadAudio(
+                videoId: candidate.videoId,
+                destinationURL: destination,
+                directURL: candidate.streamURL?.absoluteString,
+                onProgress: onProgress
+            )
+            print("✅ Tải trực tiếp bằng iOS On-Device Python thành công: \(localFile.path)")
+            return localFile
+        } catch {
+            throw SpotifyImportError.downloadFailed("iOS On-Device Engine tải thất bại: \(error.localizedDescription)")
+        }
         #else
-        throw SpotifyImportError.downloadFailed("Chức năng tải chỉ hỗ trợ trên macOS (thông qua yt-dlp).")
+        throw SpotifyImportError.downloadFailed("Nền tảng này không được hỗ trợ tải âm thanh.")
         #endif
     }
 
     // MARK: - 4. Tag Audio File
 
     /// Nhúng metadata và ảnh bìa vào file âm thanh sử dụng AVAssetExportSession.
-    /// Tự động fallback an toàn về file gốc nếu thiết bị không hỗ trợ nhúng atom để đảm bảo 100% upload thành công.
+    /// Tự động fallback an toàn về file gốc nếu thiết bị không hỗ trợ nhúng atom.
     func tagAudioFile(
         at sourceURL: URL,
         with metadata: SpotifyTrackMetadata
@@ -241,37 +250,37 @@ final class SpotifyImportService: SpotifyImportServiceProtocol {
             metadataItems.append(artworkItem)
         }
 
-        // 1. Thử export với AppleM4A preset (tự động trích xuất âm thanh từ MP4/M4A/Video và transcode sang AAC chuẩn của Apple)
-        if let transcodeSession = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetAppleM4A) {
-            transcodeSession.outputURL = outputURL
-            transcodeSession.outputFileType = .m4a
-            transcodeSession.metadata = metadataItems
-            await transcodeSession.export()
-            
-            if transcodeSession.status == .completed {
-                return outputURL
-            } else {
-                print("⚠️ AVAssetExportPresetAppleM4A thất bại: \(transcodeSession.error?.localizedDescription ?? "unknown")")
-            }
-        }
-
-        // 2. Thử export với Passthrough
-        try? FileManager.default.removeItem(at: outputURL)
+        // 1. Thử export với Passthrough trước (Tốc độ siêu nhanh, không re-encode)
         if let passthroughSession = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetPassthrough) {
             passthroughSession.outputURL = outputURL
             passthroughSession.outputFileType = .m4a
             passthroughSession.metadata = metadataItems
             await passthroughSession.export()
             
-            if passthroughSession.status == .completed {
+            if passthroughSession.status == .completed && FileManager.default.fileExists(atPath: outputURL.path) {
                 return outputURL
             } else {
                 print("⚠️ Passthrough thất bại: \(passthroughSession.error?.localizedDescription ?? "unknown")")
             }
         }
 
-        // 3. Fallback an toàn tuyệt đối: Trả về file gốc để upload Drive thành công 100%
-        print("⚠️ Không thể gắn metadata atom cục bộ vào file này, sử dụng file gốc để tải lên Drive...")
+        // 2. Fallback: Thử export với AppleM4A preset (AAC chuẩn Apple, chậm hơn vì phải re-encode)
+        try? FileManager.default.removeItem(at: outputURL)
+        if let transcodeSession = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetAppleM4A) {
+            transcodeSession.outputURL = outputURL
+            transcodeSession.outputFileType = .m4a
+            transcodeSession.metadata = metadataItems
+            await transcodeSession.export()
+            
+            if transcodeSession.status == .completed && FileManager.default.fileExists(atPath: outputURL.path) {
+                return outputURL
+            } else {
+                print("⚠️ AVAssetExportPresetAppleM4A thất bại: \(transcodeSession.error?.localizedDescription ?? "unknown")")
+            }
+        }
+
+        // 3. Fallback an toàn: Trả về file gốc
+        print("⚠️ Sử dụng file nguồn đã tải về...")
         return sourceURL
     }
 
@@ -285,27 +294,34 @@ final class SpotifyImportService: SpotifyImportServiceProtocol {
         let candTitleClean = cleanSearchString(candidate.title)
         let candUploaderClean = cleanSearchString(candidate.uploaderName)
 
+        let tTokens = tokenize(targetTitleClean)
+        let cTokens = tokenize(candTitleClean)
+        let aTokens = tokenize(targetArtistClean)
+        let uTokens = tokenize(candUploaderClean)
+
         // 1. Khớp tiêu đề bài hát (0.00 -> 0.40)
-        if candTitleClean == targetTitleClean || candTitleClean.contains(targetTitleClean) || targetTitleClean.contains(candTitleClean) {
+        if candTitleClean == targetTitleClean {
             score += 0.40
-        } else {
-            let tTokens = tokenize(targetTitleClean)
-            let cTokens = tokenize(candTitleClean)
-            if !tTokens.isEmpty {
+        } else if !tTokens.isEmpty {
+            // Tránh substring containment cho chuỗi ngắn; dùng token overlap
+            if tTokens.isSubset(of: cTokens) {
+                score += 0.38
+            } else {
                 let overlap = Double(tTokens.intersection(cTokens).count) / Double(tTokens.count)
-                score += overlap * 0.40
+                score += overlap * 0.35
             }
         }
 
         // 2. Khớp tên nghệ sĩ (0.00 -> 0.35)
-        if candUploaderClean.contains(targetArtistClean) || candTitleClean.contains(targetArtistClean) {
+        if candUploaderClean == targetArtistClean || candUploaderClean.contains(targetArtistClean) {
             score += 0.35
-        } else {
-            let aTokens = tokenize(targetArtistClean)
-            let cAllTokens = tokenize("\(candUploaderClean) \(candTitleClean)")
-            if !aTokens.isEmpty {
-                let overlap = Double(aTokens.intersection(cAllTokens).count) / Double(aTokens.count)
-                score += overlap * 0.35
+        } else if !aTokens.isEmpty {
+            let combinedCandTokens = uTokens.union(cTokens)
+            if aTokens.isSubset(of: combinedCandTokens) {
+                score += 0.32
+            } else {
+                let overlap = Double(aTokens.intersection(combinedCandTokens).count) / Double(aTokens.count)
+                score += overlap * 0.30
             }
         }
 
@@ -323,8 +339,9 @@ final class SpotifyImportService: SpotifyImportServiceProtocol {
         if candidate.isYTMusic {
             score += 0.20
         }
+
         // 5. Kiểm tra thời lượng hợp lý của một bài hát
-        if candidate.durationSeconds > 600 { // > 10 phút -> video tuyển tập/mashup dài
+        if candidate.durationSeconds > 600 {
             score -= 0.60
         } else if candidate.durationSeconds >= 120 && candidate.durationSeconds <= 420 {
             score += 0.05
@@ -354,7 +371,7 @@ final class SpotifyImportService: SpotifyImportServiceProtocol {
     /// Tách chuỗi thành tập hợp token lowercase, bỏ ký tự đặc biệt.
     private func tokenize(_ text: String) -> Set<String> {
         let cleaned = text.lowercased()
-            .replacingOccurrences(of: "[^a-z0-9\\s]", with: " ", options: .regularExpression)
+            .replacingOccurrences(of: "[^a-z0-9\\sàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]", with: " ", options: .regularExpression)
         let tokens = cleaned.components(separatedBy: .whitespaces)
             .map { $0.trimmingCharacters(in: .whitespaces) }
             .filter { !$0.isEmpty && $0.count > 1 }
@@ -386,7 +403,7 @@ final class SpotifyImportService: SpotifyImportServiceProtocol {
             "context": [
                 "client": [
                     "clientName": "WEB_REMIX",
-                    "clientVersion": "1.20231214.00.00",
+                    "clientVersion": "1.20240101.01.00",
                     "hl": "en"
                 ]
             ],
@@ -464,11 +481,11 @@ final class SpotifyImportService: SpotifyImportServiceProtocol {
                 return lower != "song" && lower != "video" && lower != "artist" && lower != "album" && lower != "single" && !lower.contains("views") && !lower.contains("plays") && !lower.contains("audience")
             }
             
-            if let firstArtist = filteredTexts.first(where: { !$0.contains(":") }) {
+            if let firstArtist = filteredTexts.first(where: { !self.isDurationString($0) }) {
                 artist = firstArtist
             }
             
-            if let durText = allRunsText.first(where: { $0.contains(":") }) {
+            if let durText = allRunsText.first(where: { self.isDurationString($0) }) {
                 durationSeconds = parseDurationString(durText)
             }
 
@@ -504,6 +521,12 @@ final class SpotifyImportService: SpotifyImportServiceProtocol {
         return results
     }
 
+    /// Kiểm tra xem chuỗi có phải format thời lượng mm:ss hoặc hh:mm:ss không
+    private func isDurationString(_ text: String) -> Bool {
+        let pattern = #"^\d{1,2}:\d{2}(?::\d{2})?$"#
+        return text.range(of: pattern, options: .regularExpression) != nil
+    }
+
     /// Parse "3:45" hoặc "1:03:45" → seconds
     private func parseDurationString(_ text: String) -> Int {
         let parts = text.components(separatedBy: ":").compactMap { Int($0) }
@@ -529,7 +552,7 @@ final class SpotifyImportService: SpotifyImportServiceProtocol {
             "context": [
                 "client": [
                     "clientName": "WEB",
-                    "clientVersion": "2.20231214.00.00",
+                    "clientVersion": "2.20240101.01.00",
                     "hl": "en"
                 ]
             ],
@@ -597,32 +620,4 @@ final class SpotifyImportService: SpotifyImportServiceProtocol {
         }
         return results
     }
-
-
-    // MARK: - Resolve Stream URL
-
-    // Phân giải stream URL dựa theo nguồn
-
-    /// Lấy direct stream URL qua Backend cá nhân trên Vercel (chạy yt-dlp) kèm Cookies động từ thiết bị
-
-    /// Tải trực tiếp file audio qua Fly.io Proxy (chạy yt-dlp + Stream Proxy với IP không bị botguard)
-
-    /// Lấy stream URL từ Cobalt API, luân chuyển qua nhiều s
-
-    /// Lấy stream URL từ Piped API: GET {baseURL}/streams/{videoId}
-
-    /// Lấy stream URL từ Invidious API: GET {baseURL}/api/v1/videos/{videoId}
-
-    // MARK: - Private: Fallback Logic
-
-    /// Xử lý phương án dự phòng khi Piped thất bạ
-    
-    // MARK: - Private: SoundCloud Search & Stream
-
-    // MARK: - Private: Zing MP3 Integration
-
-    private let zingVersion = "1.6.34"
-    private let zingBaseURL = "https://zingmp3.vn"
-    private let zingSecretKey = "2aa2d1c561e809b267f3638c4a307aab"
-    private let zingApiKey = "88265e23d4284f25963e6eedac8fbfa3"
 }

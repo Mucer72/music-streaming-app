@@ -304,8 +304,15 @@ class DatabaseViewModel: ObservableObject {
         }
     }
     
+    func updateCoverImage(imageData: Data, mimeType: String = "image/jpeg") async throws -> String {
+        let rootID = try await driveService.getOrCreateFolder(name: AppEnvironment.driveRootFolderName)
+        let coversFolderID = try await driveService.getOrCreateFolder(name: "covers", parentID: rootID)
+        let newCoverID = try await driveService.uploadImageData(imageData: imageData, mimeType: mimeType, folderID: coversFolderID)
+        try await driveService.setPublicPermission(fileID: newCoverID)
+        return newCoverID
+    }
+    
     func updateCoverImage(imageURL: URL) async throws -> String {
-        // Không cần do-catch ở đây nếu bạn muốn hàm ném lỗi lên
         let rootID = try await driveService.getOrCreateFolder(name: AppEnvironment.driveRootFolderName)
         let coversFolderID = try await driveService.getOrCreateFolder(name: "covers", parentID: rootID)
         let newCoverID = try await driveService.uploadImageFile(fileURL: imageURL, folderID: coversFolderID)
